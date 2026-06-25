@@ -3,22 +3,24 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/login",
+        "http://localhost:5000/api/auth/register",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            name,
             email,
             password,
           }),
@@ -28,29 +30,35 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (data.success) {
-        localStorage.setItem("token", data.token);
-
-        router.push("/company");
+        alert("Registration Successful");
+        router.push("/login");
       } else {
         alert(data.message);
       }
     } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
+      console.log(error);
     }
   };
 
   return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="w-[400px] border p-6 rounded shadow-lg">
-        <h1 className="text-2xl font-bold mb-4 text-center">
-          SmartERP Login
+    <div className="flex h-screen justify-center items-center">
+      <div className="border p-6 rounded w-[400px]">
+        <h1 className="text-2xl font-bold mb-4">
+          Register
         </h1>
+
+        <input
+          type="text"
+          placeholder="Name"
+          className="border w-full p-2 mb-3"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
         <input
           type="email"
           placeholder="Email"
-          className="border w-full p-2 mb-3 rounded"
+          className="border w-full p-2 mb-3"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -58,27 +66,17 @@ export default function LoginPage() {
         <input
           type="password"
           placeholder="Password"
-          className="border w-full p-2 mb-3 rounded"
+          className="border w-full p-2 mb-3"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
         <button
-          onClick={handleLogin}
-          className="bg-blue-600 text-white w-full p-2 rounded"
+          onClick={handleRegister}
+          className="bg-green-600 text-white p-2 w-full"
         >
-          Login
+          Register
         </button>
-
-        <p className="mt-4 text-center">
-          New User?
-          <button
-            onClick={() => router.push("/register")}
-            className="text-blue-600 ml-2"
-          >
-            Register
-          </button>
-        </p>
       </div>
     </div>
   );
