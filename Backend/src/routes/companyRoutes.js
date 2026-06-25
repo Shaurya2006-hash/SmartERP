@@ -1,26 +1,17 @@
 const express = require("express");
-
 const router = express.Router();
-
-const authMiddleware = require(
-  "../middleware/authMiddleware"
-);
 
 const {
   createCompany,
   getCompanies,
+  updateCompany,
+  deleteCompany,
+
 } = require("../controllers/companyController");
 
-router.post(
-  "/create",
-  authMiddleware,
-  createCompany
-);
+router.post("/create", createCompany);
+router.get("/all", getCompanies);
+router.put("/update/:id", updateCompany);
 
-router.get(
-  "/all",
-  authMiddleware,
-  getCompanies
-);
-
+router.delete("/delete/:id", deleteCompany);
 module.exports = router;

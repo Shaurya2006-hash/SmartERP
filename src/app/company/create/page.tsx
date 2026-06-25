@@ -10,13 +10,39 @@ export default function CreateCompanyPage() {
   const [address, setAddress] = useState("");
   const [gst, setGst] = useState("");
   const [state, setState] = useState("");
-  const [financialYear, setFinancialYear] =
-    useState("");
+  const [financialYear, setFinancialYear] = useState("");
 
-  const handleSubmit = () => {
-    alert("Company Created Successfully");
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/company/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_name: companyName,
+            address,
+            gst_number: gst,
+            financial_year: financialYear,
+            state,
+          }),
+        }
+      );
 
-    router.push("/company");
+      const data = await response.json();
+
+      if (data.success) {
+        alert("Company Created Successfully");
+        router.push("/company");
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Error creating company");
+    }
   };
 
   return (
@@ -31,9 +57,7 @@ export default function CreateCompanyPage() {
           placeholder="Company Name"
           className="border p-3 w-full mb-4"
           value={companyName}
-          onChange={(e) =>
-            setCompanyName(e.target.value)
-          }
+          onChange={(e) => setCompanyName(e.target.value)}
         />
 
         <input
@@ -41,9 +65,7 @@ export default function CreateCompanyPage() {
           placeholder="Address"
           className="border p-3 w-full mb-4"
           value={address}
-          onChange={(e) =>
-            setAddress(e.target.value)
-          }
+          onChange={(e) => setAddress(e.target.value)}
         />
 
         <input
@@ -59,9 +81,7 @@ export default function CreateCompanyPage() {
           placeholder="State"
           className="border p-3 w-full mb-4"
           value={state}
-          onChange={(e) =>
-            setState(e.target.value)
-          }
+          onChange={(e) => setState(e.target.value)}
         />
 
         <input
