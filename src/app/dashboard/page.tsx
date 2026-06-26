@@ -66,9 +66,14 @@ export default function Dashboard() {
               Dashboard
             </li>
 
-            <li className="cursor-pointer hover:text-blue-400">
-              Masters
-            </li>
+            <li
+  onClick={() =>
+    router.push("/masters/ledgers")
+  }
+  className="cursor-pointer hover:text-blue-400"
+>
+  Masters
+</li>
 
             <li className="cursor-pointer hover:text-blue-400">
               Transactions
