@@ -7,6 +7,29 @@ export default function Dashboard() {
   const router = useRouter();
 
   const [companyName, setCompanyName] = useState("");
+  const [ledgerCount, setLedgerCount] = useState(0);
+  const [groupCount, setGroupCount] = useState(0);
+  const [stockGroupCount, setStockGroupCount] = useState(0);
+  const [unitCount, setUnitCount] = useState(0);
+  const [stockItemCount, setStockItemCount] = useState(0);
+
+  const loadDashboard = async () => {
+    const companyId = localStorage.getItem("companyId");
+
+    const response = await fetch(
+      `http://localhost:5000/api/dashboard/${companyId}`
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+      setLedgerCount(data.ledgerCount);
+      setGroupCount(data.groupCount);
+      setStockGroupCount(data.stockGroupCount);
+      setUnitCount(data.unitCount);
+      setStockItemCount(data.stockItemCount);
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -21,6 +44,8 @@ export default function Dashboard() {
     if (company) {
       setCompanyName(company);
     }
+
+    loadDashboard();
   }, [router]);
 
   const logout = () => {
@@ -36,9 +61,7 @@ export default function Dashboard() {
       {/* Header */}
       <header className="bg-white shadow-md px-8 py-4 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-blue-700">
-            SmartERP
-          </h1>
+          <h1 className="text-3xl font-bold text-blue-700">SmartERP</h1>
 
           <p className="text-gray-600 mt-1">
             Company :
@@ -57,18 +80,13 @@ export default function Dashboard() {
       </header>
 
       <div className="flex">
-
         {/* Sidebar */}
         <aside className="w-64 min-h-screen bg-gray-900 text-white">
-
           <div className="p-6 border-b border-gray-700">
-            <h2 className="text-2xl font-bold">
-              Menu
-            </h2>
+            <h2 className="text-2xl font-bold">Menu</h2>
           </div>
 
           <nav className="p-4">
-
             <button
               onClick={() => router.push("/dashboard")}
               className="w-full text-left px-4 py-3 rounded hover:bg-gray-700"
@@ -76,9 +94,7 @@ export default function Dashboard() {
               📊 Dashboard
             </button>
 
-            <p className="mt-6 mb-2 text-gray-400 font-semibold">
-              Masters
-            </p>
+            <p className="mt-6 mb-2 text-gray-400 font-semibold">Masters</p>
 
             <button
               onClick={() => router.push("/company")}
@@ -121,17 +137,31 @@ export default function Dashboard() {
               Receipt Voucher
             </button>
 
-            <p className="mt-6 mb-2 text-gray-400 font-semibold">
-              Inventory
-            </p>
+            {/* Inventory */}
+            <p className="mt-6 mb-2 text-gray-400 font-semibold">Inventory</p>
 
-            <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
-              Stock Items
+            <button
+              onClick={() => router.push("/masters/stock-groups")}
+              className="w-full text-left px-4 py-3 rounded hover:bg-gray-700"
+            >
+              📂 Stock Groups
             </button>
 
-            <p className="mt-6 mb-2 text-gray-400 font-semibold">
-              Accounting
-            </p>
+            <button
+              onClick={() => router.push("/masters/units")}
+              className="w-full text-left px-4 py-3 rounded hover:bg-gray-700"
+            >
+              📏 Units
+            </button>
+
+            <button
+              onClick={() => router.push("/masters/stock-items")}
+              className="w-full text-left px-4 py-3 rounded hover:bg-gray-700"
+            >
+              📦 Stock Items
+            </button>
+
+            <p className="mt-6 mb-2 text-gray-400 font-semibold">Accounting</p>
 
             <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
               Trial Balance
@@ -145,82 +175,63 @@ export default function Dashboard() {
               Profit & Loss
             </button>
 
-            <p className="mt-6 mb-2 text-gray-400 font-semibold">
-              GST
-            </p>
+            <p className="mt-6 mb-2 text-gray-400 font-semibold">GST</p>
 
             <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
               GST Reports
             </button>
 
-            <p className="mt-6 mb-2 text-gray-400 font-semibold">
-              Reports
-            </p>
+            <p className="mt-6 mb-2 text-gray-400 font-semibold">Reports</p>
 
             <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
               Ledger Report
             </button>
-
           </nav>
         </aside>
 
         {/* Main Content */}
-
         <main className="flex-1 p-8">
+          <h2 className="text-4xl font-bold mb-8">Dashboard</h2>
 
-          <h2 className="text-4xl font-bold mb-8">
-            Dashboard
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-            <div className="bg-white rounded-xl shadow p-6">
-              <h3 className="text-lg font-semibold">
-                Total Companies
-              </h3>
-
-              <p className="text-4xl font-bold text-blue-600 mt-4">
-                1
+          <div className="grid md:grid-cols-5 gap-6">
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="font-semibold">Ledgers</h3>
+              <p className="text-3xl mt-2 font-bold text-orange-600">
+                {ledgerCount}
               </p>
             </div>
 
-            <div className="bg-white rounded-xl shadow p-6">
-              <h3 className="text-lg font-semibold">
-                Total Groups
-              </h3>
-
-              <p className="text-4xl font-bold text-green-600 mt-4">
-                0
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="font-semibold">Groups</h3>
+              <p className="text-3xl mt-2 font-bold text-green-600">
+                {groupCount}
               </p>
             </div>
 
-            <div className="bg-white rounded-xl shadow p-6">
-              <h3 className="text-lg font-semibold">
-                Total Ledgers
-              </h3>
-
-              <p className="text-4xl font-bold text-orange-600 mt-4">
-                0
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="font-semibold">Stock Groups</h3>
+              <p className="text-3xl mt-2 font-bold text-blue-600">
+                {stockGroupCount}
               </p>
             </div>
 
-            <div className="bg-white rounded-xl shadow p-6">
-              <h3 className="text-lg font-semibold">
-                Users
-              </h3>
-
-              <p className="text-4xl font-bold text-purple-600 mt-4">
-                1
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="font-semibold">Units</h3>
+              <p className="text-3xl mt-2 font-bold text-purple-600">
+                {unitCount}
               </p>
             </div>
 
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="font-semibold">Stock Items</h3>
+              <p className="text-3xl mt-2 font-bold text-red-600">
+                {stockItemCount}
+              </p>
+            </div>
           </div>
 
           <div className="bg-white rounded-xl shadow mt-10 p-8">
-
-            <h2 className="text-2xl font-bold mb-4">
-              Welcome to SmartERP
-            </h2>
+            <h2 className="text-2xl font-bold mb-4">Welcome to SmartERP</h2>
 
             <p className="text-gray-700 text-lg">
               Selected Company :
@@ -230,15 +241,11 @@ export default function Dashboard() {
             </p>
 
             <p className="mt-4 text-gray-600">
-              Use the menu on the left to manage Companies,
-              Groups, Ledgers, Inventory, Transactions,
-              Accounting, GST and Reports.
+              Use the menu on the left to manage Companies, Groups, Ledgers,
+              Inventory, Transactions, Accounting, GST and Reports.
             </p>
-
           </div>
-
         </main>
-
       </div>
     </div>
   );
