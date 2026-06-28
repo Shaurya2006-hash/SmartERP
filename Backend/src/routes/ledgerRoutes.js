@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   createLedger,
   getLedgers,
+  getLedgerById,
   updateLedger,
   deleteLedger,
   searchLedger,
@@ -18,5 +19,6 @@ router.put("/update/:id", updateLedger);
 router.delete("/delete/:id", deleteLedger);
 
 router.get("/search", searchLedger);
+router.get("/:id", getLedgerById);
 
 module.exports = router;

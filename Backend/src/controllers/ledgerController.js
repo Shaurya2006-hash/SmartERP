@@ -1,12 +1,14 @@
 const pool = require("../config/db");
 
+// ===============================
 // Create Ledger
+// ===============================
 const createLedger = async (req, res) => {
   try {
     const {
       company_id,
+      group_id,
       ledger_name,
-      ledger_type,
       address,
       phone,
       email,
@@ -19,8 +21,8 @@ const createLedger = async (req, res) => {
       `INSERT INTO ledgers
       (
         company_id,
+        group_id,
         ledger_name,
-        ledger_type,
         address,
         phone,
         email,
@@ -28,12 +30,12 @@ const createLedger = async (req, res) => {
         opening_balance,
         balance_type
       )
-      VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
       RETURNING *`,
       [
         company_id,
+        group_id,
         ledger_name,
-        ledger_type,
         address,
         phone,
         email,
@@ -57,13 +59,22 @@ const createLedger = async (req, res) => {
   }
 };
 
+// ===============================
 // Get All Ledgers
+// ===============================
 const getLedgers = async (req, res) => {
   try {
     const { companyId } = req.params;
 
     const result = await pool.query(
-      "SELECT * FROM ledgers WHERE company_id=$1 ORDER BY id DESC",
+      `SELECT
+          ledgers.*,
+          groups.group_name
+       FROM ledgers
+       LEFT JOIN groups
+       ON ledgers.group_id = groups.id
+       WHERE ledgers.company_id = $1
+       ORDER BY ledgers.id DESC`,
       [companyId]
     );
 
@@ -81,14 +92,55 @@ const getLedgers = async (req, res) => {
   }
 };
 
+// ===============================
+// Get Single Ledger
+// ===============================
+const getLedgerById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      `SELECT
+          ledgers.*,
+          groups.group_name
+       FROM ledgers
+       LEFT JOIN groups
+       ON ledgers.group_id = groups.id
+       WHERE ledgers.id = $1`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Ledger not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      ledger: result.rows[0],
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ===============================
 // Update Ledger
+// ===============================
 const updateLedger = async (req, res) => {
   try {
     const { id } = req.params;
 
     const {
+      group_id,
       ledger_name,
-      ledger_type,
       address,
       phone,
       email,
@@ -100,19 +152,19 @@ const updateLedger = async (req, res) => {
     const result = await pool.query(
       `UPDATE ledgers
        SET
-       ledger_name=$1,
-       ledger_type=$2,
-       address=$3,
-       phone=$4,
-       email=$5,
-       gst_number=$6,
-       opening_balance=$7,
-       balance_type=$8
-       WHERE id=$9
+         group_id = $1,
+         ledger_name = $2,
+         address = $3,
+         phone = $4,
+         email = $5,
+         gst_number = $6,
+         opening_balance = $7,
+         balance_type = $8
+       WHERE id = $9
        RETURNING *`,
       [
+        group_id,
         ledger_name,
-        ledger_type,
         address,
         phone,
         email,
@@ -137,13 +189,15 @@ const updateLedger = async (req, res) => {
   }
 };
 
+// ===============================
 // Delete Ledger
+// ===============================
 const deleteLedger = async (req, res) => {
   try {
     const { id } = req.params;
 
     await pool.query(
-      "DELETE FROM ledgers WHERE id=$1",
+      "DELETE FROM ledgers WHERE id = $1",
       [id]
     );
 
@@ -161,13 +215,22 @@ const deleteLedger = async (req, res) => {
   }
 };
 
+// ===============================
 // Search Ledger
+// ===============================
 const searchLedger = async (req, res) => {
   try {
     const { name } = req.query;
 
     const result = await pool.query(
-      "SELECT * FROM ledgers WHERE ledger_name ILIKE $1",
+      `SELECT
+          ledgers.*,
+          groups.group_name
+       FROM ledgers
+       LEFT JOIN groups
+       ON ledgers.group_id = groups.id
+       WHERE ledgers.ledger_name ILIKE $1
+       ORDER BY ledgers.id DESC`,
       [`%${name}%`]
     );
 
@@ -188,6 +251,7 @@ const searchLedger = async (req, res) => {
 module.exports = {
   createLedger,
   getLedgers,
+  getLedgerById,
   updateLedger,
   deleteLedger,
   searchLedger,

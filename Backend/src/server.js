@@ -10,6 +10,7 @@ const app = express();
 const authRoutes = require("./routes/authRoutes");
 const companyRoutes = require("./routes/companyRoutes");
 const ledgerRoutes = require("./routes/ledgerRoutes");
+const groupRoutes = require("./routes/groupRoutes");
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
@@ -18,7 +19,7 @@ app.get("/", (req, res) => {
   res.send("SmartERP Backend Running");
 });
 app.use("/api/ledger", ledgerRoutes);
-
+app.use("/api/group", groupRoutes);
 app.get("/test-db", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");
