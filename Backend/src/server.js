@@ -16,6 +16,7 @@ const stockGroupRoute=require("./routes/stockGroupRoute");
 const stockItemRoutes=require("./routes/stockItemRoutes");
 const dashboardRoutes =
 require("./routes/dashboardRoutes");
+const voucherRoutes = require("./routes/voucherRoutes");
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
@@ -32,6 +33,7 @@ app.use(
 "/api/dashboard",
 dashboardRoutes
 );
+app.use("/api/voucher", voucherRoutes);
 app.get("/test-db", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");

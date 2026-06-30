@@ -81,113 +81,211 @@ export default function Dashboard() {
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 min-h-screen bg-gray-900 text-white">
-          <div className="p-6 border-b border-gray-700">
-            <h2 className="text-2xl font-bold">Menu</h2>
-          </div>
+       {/* Sidebar */}
+<aside className="w-72 min-h-screen bg-gray-900 text-white overflow-y-auto">
 
-          <nav className="p-4">
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="w-full text-left px-4 py-3 rounded hover:bg-gray-700"
-            >
-              📊 Dashboard
-            </button>
+  <div className="p-6 border-b border-gray-700">
+    <h2 className="text-2xl font-bold">SmartERP</h2>
+    <p className="text-sm text-gray-400 mt-1">
+      Business Management System
+    </p>
+  </div>
 
-            <p className="mt-6 mb-2 text-gray-400 font-semibold">Masters</p>
+  <nav className="p-4 space-y-2">
 
-            <button
-              onClick={() => router.push("/company")}
-              className="w-full text-left px-4 py-3 rounded hover:bg-gray-700"
-            >
-              🏢 Companies
-            </button>
+    {/* Dashboard */}
+    <button
+      onClick={() => router.push("/dashboard")}
+      className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-600 transition"
+    >
+      📊 Dashboard
+    </button>
 
-            <button
-              onClick={() => router.push("/masters/groups")}
-              className="w-full text-left px-4 py-3 rounded hover:bg-gray-700"
-            >
-              📂 Groups
-            </button>
+    {/* Masters */}
+    <div className="pt-4">
+      <p className="text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">
+        Masters
+      </p>
 
-            <button
-              onClick={() => router.push("/masters/ledgers")}
-              className="w-full text-left px-4 py-3 rounded hover:bg-gray-700"
-            >
-              📒 Ledgers
-            </button>
+      <button
+        onClick={() => router.push("/company")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        🏢 Companies
+      </button>
 
-            <p className="mt-6 mb-2 text-gray-400 font-semibold">
-              Transactions
-            </p>
+      <button
+        onClick={() => router.push("/masters/groups")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        📂 Ledger Groups
+      </button>
 
-            <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
-              Sales Voucher
-            </button>
+      <button
+        onClick={() => router.push("/masters/ledgers")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        📒 Ledgers
+      </button>
+    </div>
 
-            <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
-              Purchase Voucher
-            </button>
+    {/* Inventory */}
+    <div className="pt-4">
+      <p className="text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">
+        Inventory
+      </p>
 
-            <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
-              Payment Voucher
-            </button>
+      <button
+        onClick={() => router.push("/masters/stock-groups")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        📁 Stock Groups
+      </button>
 
-            <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
-              Receipt Voucher
-            </button>
+      <button
+        onClick={() => router.push("/masters/units")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        📏 Units
+      </button>
 
-            {/* Inventory */}
-            <p className="mt-6 mb-2 text-gray-400 font-semibold">Inventory</p>
+      <button
+        onClick={() => router.push("/masters/stock-items")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        📦 Stock Items
+      </button>
+    </div>
 
-            <button
-              onClick={() => router.push("/masters/stock-groups")}
-              className="w-full text-left px-4 py-3 rounded hover:bg-gray-700"
-            >
-              📂 Stock Groups
-            </button>
+    {/* Vouchers */}
+    <div className="pt-4">
+      <p className="text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">
+        Vouchers
+      </p>
 
-            <button
-              onClick={() => router.push("/masters/units")}
-              className="w-full text-left px-4 py-3 rounded hover:bg-gray-700"
-            >
-              📏 Units
-            </button>
+      <button
+        onClick={() => router.push("/voucher/payment")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        💳 Payment Voucher
+      </button>
 
-            <button
-              onClick={() => router.push("/masters/stock-items")}
-              className="w-full text-left px-4 py-3 rounded hover:bg-gray-700"
-            >
-              📦 Stock Items
-            </button>
+      <button
+        onClick={() => router.push("/voucher/receipt")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        💰 Receipt Voucher
+      </button>
 
-            <p className="mt-6 mb-2 text-gray-400 font-semibold">Accounting</p>
+      <button
+        onClick={() => router.push("/voucher/journal")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        📘 Journal Voucher
+      </button>
 
-            <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
-              Trial Balance
-            </button>
+      <button
+        onClick={() => router.push("/voucher/purchase")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        🛒 Purchase Voucher
+      </button>
+    </div>
 
-            <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
-              Balance Sheet
-            </button>
+    {/* Accounting */}
+    <div className="pt-4">
+      <p className="text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">
+        Accounting
+      </p>
 
-            <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
-              Profit & Loss
-            </button>
+      <button
+        onClick={() => router.push("/accounting/trial-balance")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        📑 Trial Balance
+      </button>
 
-            <p className="mt-6 mb-2 text-gray-400 font-semibold">GST</p>
+      <button
+        onClick={() => router.push("/accounting/profit-loss")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        📈 Profit & Loss
+      </button>
 
-            <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
-              GST Reports
-            </button>
+      <button
+        onClick={() => router.push("/accounting/balance-sheet")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        🏦 Balance Sheet
+      </button>
+    </div>
 
-            <p className="mt-6 mb-2 text-gray-400 font-semibold">Reports</p>
+    {/* GST */}
+    <div className="pt-4">
+      <p className="text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">
+        GST
+      </p>
 
-            <button className="w-full text-left px-4 py-3 rounded hover:bg-gray-700">
-              Ledger Report
-            </button>
-          </nav>
-        </aside>
+      <button
+        onClick={() => router.push("/gst/reports")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        📄 GST Reports
+      </button>
+    </div>
+
+    {/* Reports */}
+    <div className="pt-4">
+      <p className="text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">
+        Reports
+      </p>
+
+      <button
+        onClick={() => router.push("/reports/ledger")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        📚 Ledger Report
+      </button>
+
+      <button
+        onClick={() => router.push("/reports/stock")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        📦 Stock Report
+      </button>
+
+      <button
+        onClick={() => router.push("/reports/purchase")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        🛒 Purchase Report
+      </button>
+
+      <button
+        onClick={() => router.push("/reports/payment")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        💳 Payment Report
+      </button>
+
+      <button
+        onClick={() => router.push("/reports/receipt")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        💰 Receipt Report
+      </button>
+
+      <button
+        onClick={() => router.push("/reports/journal")}
+        className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700"
+      >
+        📘 Journal Report
+      </button>
+    </div>
+
+  </nav>
+
+</aside>
 
         {/* Main Content */}
         <main className="flex-1 p-8">
