@@ -190,6 +190,12 @@ export default function Dashboard() {
       >
         🛒 Purchase Voucher
       </button>
+      <button
+  onClick={() => router.push("/voucher/sales")}
+  className="w-full text-left px-4 py-3 rounded hover:bg-gray-700"
+>
+  🧾 Sales Voucher
+</button>
     </div>
 
     {/* Accounting */}
