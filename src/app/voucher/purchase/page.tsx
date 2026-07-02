@@ -1,6 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface Ledger {
+  id: number;
+  ledger_name: string;
+  ledger_type: string;
+}
+
+interface StockItem {
+  id: number;
+  item_name: string;
+  gst_percentage?: number;
+}
 
 export default function PurchaseVoucher() {
   const companyId =
@@ -8,12 +20,14 @@ export default function PurchaseVoucher() {
       ? localStorage.getItem("companyId")
       : "";
 
-  const [voucherNo, setVoucherNo] = useState("");
   const [voucherDate, setVoucherDate] = useState("");
   const [referenceNo, setReferenceNo] = useState("");
-  const [supplierLedger, setSupplierLedger] = useState("");
-  const [purchaseLedger, setPurchaseLedger] = useState("");
+  const [supplierLedger, setSupplierLedger] = useState<number | "">("");
+  const [purchaseLedger, setPurchaseLedger] = useState<number | "">("");
   const [narration, setNarration] = useState("");
+
+  const [ledgers, setLedgers] = useState<Ledger[]>([]);
+  const [stockItems, setStockItems] = useState<StockItem[]>([]);
 
   const [items, setItems] = useState([
     {
@@ -24,6 +38,53 @@ export default function PurchaseVoucher() {
       amount: "",
     },
   ]);
+
+  useEffect(() => {
+    loadLedgers();
+    loadStockItems();
+  }, []);
+
+  const loadLedgers = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/ledger/all/${companyId}`
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        setLedgers(data.ledgers);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const loadStockItems = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/stock-item/all/${companyId}`
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        setStockItems(data.stockItems);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Only ledgers marked as "Supplier" show up in the Supplier dropdown
+  const supplierLedgers = ledgers.filter(
+    (l) => l.ledger_type === "Supplier"
+  );
+
+  // Only ledgers marked as "Purchase" show up in the Purchase Ledger dropdown
+  const purchaseLedgers = ledgers.filter(
+    (l) => l.ledger_type === "Purchase"
+  );
 
   const addRow = () => {
     setItems([
@@ -50,6 +111,17 @@ export default function PurchaseVoucher() {
       [field]: value,
     };
 
+    if (field === "stock_item_id") {
+      const selected = stockItems.find(
+        (s) => s.id === parseInt(value)
+      );
+      if (selected) {
+        temp[index].gst_percentage = String(
+          selected.gst_percentage || 0
+        );
+      }
+    }
+
     if (
       field === "quantity" ||
       field === "rate"
@@ -72,45 +144,138 @@ export default function PurchaseVoucher() {
   );
 
   const saveVoucher = async () => {
-    const response = await fetch(
-      "http://localhost:5000/api/voucher/purchase/create",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          company_id: companyId,
-          voucher_no: voucherNo,
-          voucher_date: voucherDate,
-          reference_no: referenceNo,
-          narration,
-          total_amount: total,
-
-          entries: [
-            {
-              ledger_id: purchaseLedger,
-              debit: total,
-              credit: 0,
-            },
-            {
-              ledger_id: supplierLedger,
-              debit: 0,
-              credit: total,
-            },
-          ],
-
-          items,
-        }),
+    try {
+      // Required field checks
+      if (!voucherDate || !referenceNo) {
+        alert("Please fill required fields");
+        return;
       }
-    );
 
-    const data = await response.json();
+      if (!supplierLedger) {
+        alert("Please select a Supplier");
+        return;
+      }
 
-    if (data.success) {
-      alert("Purchase Voucher Saved");
-    } else {
-      alert(data.message);
+      if (!purchaseLedger) {
+        alert("Please select a Purchase Ledger");
+        return;
+      }
+
+      if (!items.length) {
+        alert("Add at least one item");
+        return;
+      }
+
+      const voucherResponse = await fetch(
+        "http://localhost:5000/api/voucher/purchase/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_id: companyId,
+            voucher_date: voucherDate,
+            reference_no: referenceNo,
+            narration,
+            total_amount: total,
+            entries: [
+              {
+                ledger_id: purchaseLedger,
+                debit: total,
+                credit: 0,
+              },
+              {
+                ledger_id: supplierLedger,
+                debit: 0,
+                credit: total,
+              },
+            ],
+            items,
+          }),
+        }
+      );
+
+      const voucherData = await voucherResponse.json();
+
+      if (!voucherData.success) {
+        alert(voucherData.message);
+        return;
+      }
+
+      const subtotal = total;
+
+      const totalGST = items.reduce(
+        (sum, item) =>
+          sum +
+          ((Number(item.amount) || 0) *
+            (Number(item.gst_percentage) || 0)) /
+            100,
+        0
+      );
+
+      const cgst = totalGST / 2;
+      const sgst = totalGST / 2;
+      const igst = 0;
+
+      const grandTotal = subtotal + cgst + sgst + igst;
+
+      // Look up the actual supplier ledger so we store the NAME,
+      // not the ID, on the invoice.
+      const selectedSupplier = ledgers.find(
+        (l) => Number(l.id) === Number(supplierLedger)
+      );
+
+      if (!selectedSupplier) {
+        alert("Supplier not selected properly");
+        return;
+      }
+
+      console.log("Supplier:", selectedSupplier);
+      console.log("Items:", items);
+      console.log("Total:", total);
+
+      const invoiceResponse = await fetch(
+        "http://localhost:5000/api/invoice/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_id: companyId,
+            document_type: "Purchase Invoice",
+            invoice_date: voucherDate,
+            customer_name: selectedSupplier.ledger_name,
+            customer_address: "",
+            customer_gst: "",
+            reference_no: referenceNo,
+            narration,
+            subtotal,
+            cgst,
+            sgst,
+            igst,
+            grand_total: grandTotal,
+            items,
+          }),
+        }
+      );
+
+      const invoiceData = await invoiceResponse.json();
+
+      if (invoiceData.success) {
+        alert(
+          `Purchase Voucher ${voucherData.voucher.voucher_no} Saved & Purchase Invoice Generated`
+        );
+
+        window.location.href = "/billing/invoices";
+      } else {
+        alert(invoiceData.message);
+      }
+    } catch (error) {
+      console.log(error);
+
+      alert("Something went wrong");
     }
   };
 
@@ -124,15 +289,6 @@ export default function PurchaseVoucher() {
       <div className="bg-white rounded-lg shadow p-6">
 
         <div className="grid grid-cols-2 gap-4">
-
-          <input
-            className="border p-3 rounded"
-            placeholder="Voucher Number"
-            value={voucherNo}
-            onChange={(e) =>
-              setVoucherNo(e.target.value)
-            }
-          />
 
           <input
             type="date"
@@ -152,23 +308,51 @@ export default function PurchaseVoucher() {
             }
           />
 
-          <input
+          {/* Supplier Dropdown */}
+
+          <select
             className="border p-3 rounded"
-            placeholder="Supplier Ledger ID"
             value={supplierLedger}
             onChange={(e) =>
-              setSupplierLedger(e.target.value)
+              setSupplierLedger(Number(e.target.value))
             }
-          />
+          >
+            <option value="">
+              Select Supplier
+            </option>
 
-          <input
+            {supplierLedgers.map((ledger) => (
+              <option
+                key={ledger.id}
+                value={ledger.id}
+              >
+                {ledger.ledger_name}
+              </option>
+            ))}
+          </select>
+
+          {/* Purchase Ledger Dropdown */}
+
+          <select
             className="border p-3 rounded"
-            placeholder="Purchase Ledger ID"
             value={purchaseLedger}
             onChange={(e) =>
-              setPurchaseLedger(e.target.value)
+              setPurchaseLedger(Number(e.target.value))
             }
-          />
+          >
+            <option value="">
+              Select Purchase Ledger
+            </option>
+
+            {purchaseLedgers.map((ledger) => (
+              <option
+                key={ledger.id}
+                value={ledger.id}
+              >
+                {ledger.ledger_name}
+              </option>
+            ))}
+          </select>
 
         </div>
 
@@ -192,7 +376,7 @@ export default function PurchaseVoucher() {
             <tr className="bg-gray-200">
 
               <th className="border p-2">
-                Stock Item ID
+                Item
               </th>
 
               <th className="border p-2">
@@ -223,7 +407,7 @@ export default function PurchaseVoucher() {
 
                 <td className="border">
 
-                  <input
+                  <select
                     className="w-full p-2"
                     value={item.stock_item_id}
                     onChange={(e) =>
@@ -233,7 +417,20 @@ export default function PurchaseVoucher() {
                         e.target.value
                       )
                     }
-                  />
+                  >
+                    <option value="">
+                      Select Item
+                    </option>
+
+                    {stockItems.map((stock) => (
+                      <option
+                        key={stock.id}
+                        value={stock.id}
+                      >
+                        {stock.item_name}
+                      </option>
+                    ))}
+                  </select>
 
                 </td>
 

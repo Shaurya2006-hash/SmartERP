@@ -17,6 +17,7 @@ const stockItemRoutes=require("./routes/stockItemRoutes");
 const dashboardRoutes =
 require("./routes/dashboardRoutes");
 const voucherRoutes = require("./routes/voucherRoutes");
+const invoiceRoutes=require("./routes/invoiceRoutes");
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
@@ -34,6 +35,7 @@ app.use(
 dashboardRoutes
 );
 app.use("/api/voucher", voucherRoutes);
+app.use("/api/invoice",invoiceRoutes);
 app.get("/test-db", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");

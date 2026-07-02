@@ -3,36 +3,59 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+interface Ledger {
+  id: number;
+  ledger_name: string;
+  ledger_type: string;
+}
+
+interface StockItem {
+  id: number;
+  item_name: string;
+  rate?: number;
+  gst_percentage?: number;
+}
+
 export default function CreateSalesVoucherPage() {
   const router = useRouter();
 
-  // Static company id (replace with your auth/session logic later)
-  const companyId = 1;
+  const companyId =
+    typeof window !== "undefined"
+      ? localStorage.getItem("companyId")
+      : "";
 
   // Voucher Details
-  const [voucherNo, setVoucherNo] = useState("");
   const [voucherDate, setVoucherDate] = useState("");
   const [referenceNo, setReferenceNo] = useState("");
   const [narration, setNarration] = useState("");
 
   // Ledgers
-  const [ledgers, setLedgers] = useState<any[]>([]);
+  const [ledgers, setLedgers] = useState<Ledger[]>([]);
   const [customerLedger, setCustomerLedger] = useState("");
   const [salesLedger, setSalesLedger] = useState("");
 
   // Stock Items
-  const [stockItems, setStockItems] = useState<any[]>([]);
+  const [stockItems, setStockItems] = useState<StockItem[]>([]);
   const [items, setItems] = useState<any[]>([]);
+
+  // Only ledgers marked as "Customer" show up in the Customer dropdown
+  const customerLedgers = ledgers.filter(
+    (l) => l.ledger_type === "Customer"
+  );
 
   // Fetch Ledgers
   useEffect(() => {
     const fetchLedgers = async () => {
-      const res = await fetch(
-        `http://localhost:5000/api/ledger/list?company_id=${companyId}`
-      );
-      const data = await res.json();
-      if (data.success) {
-        setLedgers(data.ledgers);
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/ledger/all/${companyId}`
+        );
+        const data = await res.json();
+        if (data.success) {
+          setLedgers(data.ledgers);
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
     fetchLedgers();
@@ -41,12 +64,16 @@ export default function CreateSalesVoucherPage() {
   // Fetch Stock Items
   useEffect(() => {
     const fetchStockItems = async () => {
-      const res = await fetch(
-        `http://localhost:5000/api/stock-item/list?company_id=${companyId}`
-      );
-      const data = await res.json();
-      if (data.success) {
-        setStockItems(data.items);
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/stock-item/all/${companyId}`
+        );
+        const data = await res.json();
+        if (data.success) {
+          setStockItems(data.stockItems);
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
     fetchStockItems();
@@ -112,61 +139,119 @@ export default function CreateSalesVoucherPage() {
 
   // Save Voucher
   const saveVoucher = async () => {
-    if (!customerLedger) {
-      alert("Select Customer Ledger");
-      return;
-    }
-
-    if (!salesLedger) {
-      alert("Select Sales Ledger");
-      return;
-    }
-
-    if (items.length === 0) {
-      alert("Add at least one Stock Item");
-      return;
-    }
-
-    const body = {
-      company_id: companyId,
-      voucher_no: voucherNo,
-      voucher_date: voucherDate,
-      reference_no: referenceNo,
-      narration: narration,
-      total_amount: totalAmount,
-      entries: [
-        {
-          ledger_id: customerLedger,
-          debit: totalAmount,
-          credit: 0,
-        },
-        {
-          ledger_id: salesLedger,
-          debit: 0,
-          credit: totalAmount,
-        },
-      ],
-      items: items,
-    };
-
-    const response = await fetch(
-      "http://localhost:5000/api/voucher/sales/create",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
+    try {
+      if (!customerLedger) {
+        alert("Please select a Customer Ledger");
+        return;
       }
-    );
 
-    const data = await response.json();
+      if (!salesLedger) {
+        alert("Please select a Sales Ledger");
+        return;
+      }
 
-    if (data.success) {
-      alert("Sales Voucher Saved Successfully");
-      router.push("/vouchers/sales");
-    } else {
-      alert(data.message);
+      const voucherResponse = await fetch(
+        "http://localhost:5000/api/voucher/sales/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_id: companyId,
+            voucher_date: voucherDate,
+            reference_no: referenceNo,
+            narration,
+            total_amount: totalAmount,
+            entries: [
+              {
+                ledger_id: customerLedger,
+                debit: totalAmount,
+                credit: 0,
+              },
+              {
+                ledger_id: salesLedger,
+                debit: 0,
+                credit: totalAmount,
+              },
+            ],
+            items,
+          }),
+        }
+      );
+
+      const voucherData = await voucherResponse.json();
+
+      if (!voucherData.success) {
+        alert(voucherData.message);
+        return;
+      }
+
+      const subtotal = totalAmount;
+
+      const totalGST = items.reduce(
+        (sum, item) =>
+          sum +
+          ((Number(item.amount) || 0) *
+            (Number(item.gst_percentage) || 0)) /
+            100,
+        0
+      );
+
+      const cgst = totalGST / 2;
+      const sgst = totalGST / 2;
+      const igst = 0;
+
+      const grandTotal = subtotal + cgst + sgst + igst;
+
+      // Look up the actual customer ledger so we store the NAME,
+      // not the ID, on the invoice.
+      const selectedCustomer = ledgers.find(
+        (l) => String(l.id) === String(customerLedger)
+      );
+
+      const invoiceResponse = await fetch(
+        "http://localhost:5000/api/invoice/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_id: companyId,
+            document_type: "GST Invoice",
+            invoice_date: voucherDate,
+            customer_name:
+              selectedCustomer?.ledger_name || "",
+            customer_address: "",
+            customer_gst: "",
+            reference_no: referenceNo,
+            narration,
+            subtotal,
+            cgst,
+            sgst,
+            igst,
+            grand_total: grandTotal,
+            items,
+          }),
+        }
+      );
+
+      const invoiceData = await invoiceResponse.json();
+
+      if (invoiceData.success) {
+        alert(
+          `Sales Voucher ${voucherData.voucher.voucher_no} Saved & GST Invoice Generated`
+        );
+
+        window.location.href = "/billing/invoices";
+      } else {
+        alert(invoiceData.message);
+      }
+    } catch (error) {
+      console.log(error);
+
+      alert("Something went wrong");
     }
   };
 
@@ -176,16 +261,6 @@ export default function CreateSalesVoucherPage() {
 
       {/* Voucher Details */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div>
-          <label className="block mb-1 font-medium">Voucher No</label>
-          <input
-            type="text"
-            className="border rounded-lg w-full p-2"
-            value={voucherNo}
-            onChange={(e) => setVoucherNo(e.target.value)}
-          />
-        </div>
-
         <div>
           <label className="block mb-1 font-medium">Voucher Date</label>
           <input
@@ -206,7 +281,7 @@ export default function CreateSalesVoucherPage() {
           />
         </div>
 
-        <div>
+        <div className="col-span-2">
           <label className="block mb-1 font-medium">Narration</label>
           <input
             type="text"
@@ -227,9 +302,9 @@ export default function CreateSalesVoucherPage() {
             onChange={(e) => setCustomerLedger(e.target.value)}
           >
             <option value="">Select Customer Ledger</option>
-            {ledgers.map((ledger) => (
+            {customerLedgers.map((ledger) => (
               <option key={ledger.id} value={ledger.id}>
-                {ledger.name}
+                {ledger.ledger_name}
               </option>
             ))}
           </select>
@@ -245,7 +320,7 @@ export default function CreateSalesVoucherPage() {
             <option value="">Select Sales Ledger</option>
             {ledgers.map((ledger) => (
               <option key={ledger.id} value={ledger.id}>
-                {ledger.name}
+                {ledger.ledger_name}
               </option>
             ))}
           </select>
@@ -289,7 +364,7 @@ export default function CreateSalesVoucherPage() {
                     <option value="">Select Item</option>
                     {stockItems.map((s) => (
                       <option key={s.id} value={s.id}>
-                        {s.name}
+                        {s.item_name}
                       </option>
                     ))}
                   </select>
@@ -329,7 +404,7 @@ export default function CreateSalesVoucherPage() {
                 </td>
 
                 <td className="border p-2 text-right">
-                  {item.amount.toFixed(2)}
+                  {Number(item.amount).toFixed(2)}
                 </td>
 
                 <td className="border p-2 text-center">

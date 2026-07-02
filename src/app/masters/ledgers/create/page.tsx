@@ -7,6 +7,7 @@ export default function CreateLedger() {
   const router = useRouter();
 
   const [ledgerName, setLedgerName] = useState("");
+  const [ledgerType, setLedgerType] = useState("");
   const [groups, setGroups] = useState<any[]>([]);
   const [groupId, setGroupId] = useState("");
 
@@ -56,6 +57,7 @@ export default function CreateLedger() {
             company_id: companyId,
             group_id: groupId,
             ledger_name: ledgerName,
+            ledger_type: ledgerType,
             address,
             phone,
             email,
@@ -95,6 +97,27 @@ export default function CreateLedger() {
           value={ledgerName}
           onChange={(e) => setLedgerName(e.target.value)}
         />
+
+        {/* Ledger Type */}
+
+        <div className="mb-4">
+          <label className="block mb-2 font-medium">
+            Ledger Type
+          </label>
+
+       <select
+  value={ledgerType}
+  onChange={(e) => setLedgerType(e.target.value)}
+  className="border p-3 rounded w-full"
+>
+  <option value="">Select Ledger Type</option>
+  <option value="Customer">Customer</option>
+  <option value="Supplier">Supplier</option>
+  <option value="Purchase">Purchase</option>
+  <option value="Cash">Cash</option>
+  <option value="General">General</option>
+</select>
+        </div>
 
         {/* Group Dropdown */}
 

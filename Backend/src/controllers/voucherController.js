@@ -1,6 +1,29 @@
 const pool = require("../config/db");
 
 // ==========================================
+// Helper: Generate Next Voucher Number
+// ==========================================
+// Looks at the highest existing voucher_no matching pattern P### and
+// returns the next one. Called fresh on every voucher creation so the
+// frontend never has to supply or guess a voucher_no.
+const generateVoucherNo = async () => {
+  const result = await pool.query(
+    `SELECT voucher_no
+     FROM vouchers
+     WHERE voucher_no ~ '^P[0-9]+$'
+     ORDER BY id DESC
+     LIMIT 1`
+  );
+
+  if (result.rows.length === 0) return "P001";
+
+  const lastNo = result.rows[0].voucher_no;
+  const num = parseInt(lastNo.replace("P", ""), 10);
+
+  return "P" + String(num + 1).padStart(3, "0");
+};
+
+// ==========================================
 // Create Voucher
 // ==========================================
 
@@ -8,7 +31,6 @@ const createVoucher = async (req, res) => {
   try {
     const {
       company_id,
-      voucher_no,
       voucher_type,
       voucher_date,
       reference_no,
@@ -17,7 +39,8 @@ const createVoucher = async (req, res) => {
       entries,
     } = req.body;
 
-    // Create Voucher Header
+    const voucher_no = await generateVoucherNo();
+
     const voucherResult = await pool.query(
       `INSERT INTO vouchers
       (
@@ -44,23 +67,12 @@ const createVoucher = async (req, res) => {
 
     const voucherId = voucherResult.rows[0].id;
 
-    // Save Voucher Entries
     for (const entry of entries) {
       await pool.query(
         `INSERT INTO voucher_entries
-        (
-          voucher_id,
-          ledger_id,
-          debit,
-          credit
-        )
+        (voucher_id, ledger_id, debit, credit)
         VALUES($1,$2,$3,$4)`,
-        [
-          voucherId,
-          entry.ledger_id,
-          entry.debit,
-          entry.credit,
-        ]
+        [voucherId, entry.ledger_id, entry.debit, entry.credit]
       );
     }
 
@@ -162,9 +174,12 @@ const getVoucherById = async (req, res) => {
   }
 
 };
+
 // ==========================================
 // Update Voucher
 // ==========================================
+// NOTE: voucher_no is intentionally NOT updated here -
+// once a voucher is created its number should stay fixed.
 
 const updateVoucher = async (req, res) => {
   try {
@@ -172,7 +187,6 @@ const updateVoucher = async (req, res) => {
     const { id } = req.params;
 
     const {
-      voucher_no,
       voucher_type,
       voucher_date,
       reference_no,
@@ -181,20 +195,17 @@ const updateVoucher = async (req, res) => {
       entries,
     } = req.body;
 
-    // Update Voucher Header
     const result = await pool.query(
       `UPDATE vouchers
        SET
-       voucher_no=$1,
-       voucher_type=$2,
-       voucher_date=$3,
-       reference_no=$4,
-       narration=$5,
-       total_amount=$6
-       WHERE id=$7
+       voucher_type=$1,
+       voucher_date=$2,
+       reference_no=$3,
+       narration=$4,
+       total_amount=$5
+       WHERE id=$6
        RETURNING *`,
       [
-        voucher_no,
         voucher_type,
         voucher_date,
         reference_no,
@@ -204,29 +215,17 @@ const updateVoucher = async (req, res) => {
       ]
     );
 
-    // Delete Old Entries
     await pool.query(
       "DELETE FROM voucher_entries WHERE voucher_id=$1",
       [id]
     );
 
-    // Insert New Entries
     for (const entry of entries) {
       await pool.query(
         `INSERT INTO voucher_entries
-        (
-          voucher_id,
-          ledger_id,
-          debit,
-          credit
-        )
+        (voucher_id, ledger_id, debit, credit)
         VALUES($1,$2,$3,$4)`,
-        [
-          id,
-          entry.ledger_id,
-          entry.debit,
-          entry.credit,
-        ]
+        [id, entry.ledger_id, entry.debit, entry.credit]
       );
     }
 
@@ -247,6 +246,7 @@ const updateVoucher = async (req, res) => {
 
   }
 };
+
 // ==========================================
 // Delete Voucher
 // ==========================================
@@ -279,6 +279,7 @@ const deleteVoucher = async (req, res) => {
   }
 
 };
+
 // ==========================================
 // Search Voucher
 // ==========================================
@@ -314,6 +315,7 @@ const searchVoucher = async (req, res) => {
   }
 
 };
+
 // ==========================================
 // Create Purchase Voucher
 // ==========================================
@@ -323,7 +325,6 @@ const createPurchaseVoucher = async (req, res) => {
 
     const {
       company_id,
-      voucher_no,
       voucher_date,
       reference_no,
       narration,
@@ -332,7 +333,19 @@ const createPurchaseVoucher = async (req, res) => {
       items,
     } = req.body;
 
-    // Create Voucher Header
+    const validItems = items.filter(
+      item => item.stock_item_id && Number(item.quantity) > 0
+    );
+
+    if (validItems.length === 0) {
+      return res.json({
+        success: false,
+        message: "Please select at least one stock item."
+      });
+    }
+
+    const voucher_no = await generateVoucherNo();
+
     const voucherResult = await pool.query(
       `INSERT INTO vouchers
       (
@@ -358,41 +371,19 @@ const createPurchaseVoucher = async (req, res) => {
 
     const voucherId = voucherResult.rows[0].id;
 
-    // Save Ledger Entries
     for (const entry of entries) {
-
       await pool.query(
         `INSERT INTO voucher_entries
-        (
-          voucher_id,
-          ledger_id,
-          debit,
-          credit
-        )
+        (voucher_id, ledger_id, debit, credit)
         VALUES($1,$2,$3,$4)`,
-        [
-          voucherId,
-          entry.ledger_id,
-          entry.debit,
-          entry.credit,
-        ]
+        [voucherId, entry.ledger_id, entry.debit, entry.credit]
       );
-
     }
 
-    // Save Purchase Items
-    for (const item of items) {
-
+    for (const item of validItems) {
       await pool.query(
         `INSERT INTO purchase_items
-        (
-          voucher_id,
-          stock_item_id,
-          quantity,
-          rate,
-          gst_percentage,
-          amount
-        )
+        (voucher_id, stock_item_id, quantity, rate, gst_percentage, amount)
         VALUES($1,$2,$3,$4,$5,$6)`,
         [
           voucherId,
@@ -404,17 +395,12 @@ const createPurchaseVoucher = async (req, res) => {
         ]
       );
 
-      // Increase Stock
       await pool.query(
         `UPDATE stock_items
          SET quantity = quantity + $1
          WHERE id = $2`,
-        [
-          item.quantity,
-          item.stock_item_id,
-        ]
+        [item.quantity, item.stock_item_id]
       );
-
     }
 
     res.json({
@@ -427,6 +413,13 @@ const createPurchaseVoucher = async (req, res) => {
 
     console.error(error);
 
+    if (error.code === "23505" && error.constraint === "vouchers_voucher_no_key") {
+      return res.status(400).json({
+        success: false,
+        message: "Voucher number collision, please try saving again.",
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: error.message,
@@ -434,12 +427,16 @@ const createPurchaseVoucher = async (req, res) => {
 
   }
 };
+
+// ==========================================
+// Create Sales Voucher
+// ==========================================
+
 const createSalesVoucher = async (req, res) => {
   try {
 
     const {
       company_id,
-      voucher_no,
       voucher_date,
       reference_no,
       narration,
@@ -447,6 +444,19 @@ const createSalesVoucher = async (req, res) => {
       entries,
       items,
     } = req.body;
+
+    const validItems = items.filter(
+      item => item.stock_item_id && Number(item.quantity) > 0
+    );
+
+    if (validItems.length === 0) {
+      return res.json({
+        success: false,
+        message: "Please select at least one stock item."
+      });
+    }
+
+    const voucher_no = await generateVoucherNo();
 
     const voucherResult = await pool.query(
       `INSERT INTO vouchers
@@ -473,41 +483,19 @@ const createSalesVoucher = async (req, res) => {
 
     const voucherId = voucherResult.rows[0].id;
 
-    // Save Ledger Entries
     for (const entry of entries) {
-
       await pool.query(
         `INSERT INTO voucher_entries
-        (
-          voucher_id,
-          ledger_id,
-          debit,
-          credit
-        )
+        (voucher_id, ledger_id, debit, credit)
         VALUES($1,$2,$3,$4)`,
-        [
-          voucherId,
-          entry.ledger_id,
-          entry.debit,
-          entry.credit,
-        ]
+        [voucherId, entry.ledger_id, entry.debit, entry.credit]
       );
-
     }
 
-    // Save Sales Items
-    for (const item of items) {
-
+    for (const item of validItems) {
       await pool.query(
         `INSERT INTO sales_items
-        (
-          voucher_id,
-          stock_item_id,
-          quantity,
-          rate,
-          gst_percentage,
-          amount
-        )
+        (voucher_id, stock_item_id, quantity, rate, gst_percentage, amount)
         VALUES($1,$2,$3,$4,$5,$6)`,
         [
           voucherId,
@@ -519,17 +507,12 @@ const createSalesVoucher = async (req, res) => {
         ]
       );
 
-      // Reduce Stock
       await pool.query(
         `UPDATE stock_items
          SET quantity = quantity - $1
          WHERE id = $2`,
-        [
-          item.quantity,
-          item.stock_item_id,
-        ]
+        [item.quantity, item.stock_item_id]
       );
-
     }
 
     res.json({
@@ -542,6 +525,13 @@ const createSalesVoucher = async (req, res) => {
 
     console.error(error);
 
+    if (error.code === "23505" && error.constraint === "vouchers_voucher_no_key") {
+      return res.status(400).json({
+        success: false,
+        message: "Voucher number collision, please try saving again.",
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: error.message,
@@ -549,6 +539,11 @@ const createSalesVoucher = async (req, res) => {
 
   }
 };
+
+// ==========================================
+// Get Sales Vouchers
+// ==========================================
+
 const getSalesVouchers = async (req, res) => {
   try {
 
@@ -579,6 +574,11 @@ const getSalesVouchers = async (req, res) => {
 
   }
 };
+
+// ==========================================
+// Get Sales Voucher By Id
+// ==========================================
+
 const getSalesVoucherById = async (req, res) => {
 
   try {
@@ -634,6 +634,13 @@ const getSalesVoucherById = async (req, res) => {
   }
 
 };
+
+// ==========================================
+// Update Sales Voucher
+// ==========================================
+// NOTE: voucher_no is intentionally NOT updated here -
+// once a voucher is created its number should stay fixed.
+
 const updateSalesVoucher = async (req, res) => {
 
   try {
@@ -641,7 +648,6 @@ const updateSalesVoucher = async (req, res) => {
     const { id } = req.params;
 
     const {
-      voucher_no,
       voucher_date,
       reference_no,
       narration,
@@ -650,9 +656,19 @@ const updateSalesVoucher = async (req, res) => {
       items,
     } = req.body;
 
+    const validItems = items.filter(
+      item => item.stock_item_id && Number(item.quantity) > 0
+    );
+
+    if (validItems.length === 0) {
+      return res.json({
+        success: false,
+        message: "Please select at least one stock item."
+      });
+    }
+
     await pool.query("BEGIN");
 
-    // Restore Previous Stock
     const oldItems = await pool.query(
       `SELECT *
        FROM sales_items
@@ -661,32 +677,24 @@ const updateSalesVoucher = async (req, res) => {
     );
 
     for (const item of oldItems.rows) {
-
       await pool.query(
         `UPDATE stock_items
          SET quantity = quantity + $1
          WHERE id=$2`,
-        [
-          item.quantity,
-          item.stock_item_id,
-        ]
+        [item.quantity, item.stock_item_id]
       );
-
     }
 
-    // Update Voucher Header
     const result = await pool.query(
       `UPDATE vouchers
        SET
-       voucher_no=$1,
-       voucher_date=$2,
-       reference_no=$3,
-       narration=$4,
-       total_amount=$5
-       WHERE id=$6
+       voucher_date=$1,
+       reference_no=$2,
+       narration=$3,
+       total_amount=$4
+       WHERE id=$5
        RETURNING *`,
       [
-        voucher_no,
         voucher_date,
         reference_no,
         narration,
@@ -695,55 +703,31 @@ const updateSalesVoucher = async (req, res) => {
       ]
     );
 
-    // Delete Old Ledger Entries
     await pool.query(
       `DELETE FROM voucher_entries
        WHERE voucher_id=$1`,
       [id]
     );
 
-    // Insert New Ledger Entries
     for (const entry of entries) {
-
       await pool.query(
         `INSERT INTO voucher_entries
-        (
-          voucher_id,
-          ledger_id,
-          debit,
-          credit
-        )
+        (voucher_id, ledger_id, debit, credit)
         VALUES($1,$2,$3,$4)`,
-        [
-          id,
-          entry.ledger_id,
-          entry.debit,
-          entry.credit,
-        ]
+        [id, entry.ledger_id, entry.debit, entry.credit]
       );
-
     }
 
-    // Delete Old Sales Items
     await pool.query(
       `DELETE FROM sales_items
        WHERE voucher_id=$1`,
       [id]
     );
 
-    // Insert New Sales Items
-    for (const item of items) {
-
+    for (const item of validItems) {
       await pool.query(
         `INSERT INTO sales_items
-        (
-          voucher_id,
-          stock_item_id,
-          quantity,
-          rate,
-          gst_percentage,
-          amount
-        )
+        (voucher_id, stock_item_id, quantity, rate, gst_percentage, amount)
         VALUES($1,$2,$3,$4,$5,$6)`,
         [
           id,
@@ -755,17 +739,12 @@ const updateSalesVoucher = async (req, res) => {
         ]
       );
 
-      // Reduce Stock Again
       await pool.query(
         `UPDATE stock_items
          SET quantity = quantity - $1
          WHERE id=$2`,
-        [
-          item.quantity,
-          item.stock_item_id,
-        ]
+        [item.quantity, item.stock_item_id]
       );
-
     }
 
     await pool.query("COMMIT");
@@ -790,6 +769,11 @@ const updateSalesVoucher = async (req, res) => {
   }
 
 };
+
+// ==========================================
+// Delete Sales Voucher
+// ==========================================
+
 const deleteSalesVoucher = async (req, res) => {
 
   try {
@@ -798,7 +782,6 @@ const deleteSalesVoucher = async (req, res) => {
 
     await pool.query("BEGIN");
 
-    // Get Sales Items
     const items = await pool.query(
       `SELECT *
        FROM sales_items
@@ -806,36 +789,27 @@ const deleteSalesVoucher = async (req, res) => {
       [id]
     );
 
-    // Restore Stock
     for (const item of items.rows) {
-
       await pool.query(
         `UPDATE stock_items
          SET quantity = quantity + $1
          WHERE id=$2`,
-        [
-          item.quantity,
-          item.stock_item_id,
-        ]
+        [item.quantity, item.stock_item_id]
       );
-
     }
 
-    // Delete Sales Items
     await pool.query(
       `DELETE FROM sales_items
        WHERE voucher_id=$1`,
       [id]
     );
 
-    // Delete Voucher Entries
     await pool.query(
       `DELETE FROM voucher_entries
        WHERE voucher_id=$1`,
       [id]
     );
 
-    // Delete Voucher
     await pool.query(
       `DELETE FROM vouchers
        WHERE id=$1`,
@@ -863,6 +837,7 @@ const deleteSalesVoucher = async (req, res) => {
   }
 
 };
+
 module.exports = {
   createVoucher,
   createPurchaseVoucher,

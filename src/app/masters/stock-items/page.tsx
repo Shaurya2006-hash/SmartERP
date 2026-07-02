@@ -23,9 +23,9 @@ export default function StockItemsPage() {
 
       const data = await response.json();
 
-      if (data.success) {
-        setItems(data.items);
-      }
+     if (data.success) {
+  setItems(data.stockItems || []);
+}
     } catch (error) {
       console.log(error);
     }
@@ -67,9 +67,9 @@ export default function StockItemsPage() {
 
       const data = await response.json();
 
-      if (data.success) {
-        setItems(data.items);
-      }
+if (data.success) {
+  setItems(data.stockItems || []);
+}
     } catch (error) {
       console.log(error);
     }

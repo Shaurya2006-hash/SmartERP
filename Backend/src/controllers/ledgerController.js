@@ -9,6 +9,7 @@ const createLedger = async (req, res) => {
       company_id,
       group_id,
       ledger_name,
+      ledger_type,
       address,
       phone,
       email,
@@ -23,6 +24,7 @@ const createLedger = async (req, res) => {
         company_id,
         group_id,
         ledger_name,
+        ledger_type,
         address,
         phone,
         email,
@@ -30,12 +32,13 @@ const createLedger = async (req, res) => {
         opening_balance,
         balance_type
       )
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
       RETURNING *`,
       [
         company_id,
         group_id,
         ledger_name,
+        ledger_type,
         address,
         phone,
         email,
@@ -141,6 +144,7 @@ const updateLedger = async (req, res) => {
     const {
       group_id,
       ledger_name,
+      ledger_type,
       address,
       phone,
       email,
@@ -154,17 +158,19 @@ const updateLedger = async (req, res) => {
        SET
          group_id = $1,
          ledger_name = $2,
-         address = $3,
-         phone = $4,
-         email = $5,
-         gst_number = $6,
-         opening_balance = $7,
-         balance_type = $8
-       WHERE id = $9
+         ledger_type = $3,
+         address = $4,
+         phone = $5,
+         email = $6,
+         gst_number = $7,
+         opening_balance = $8,
+         balance_type = $9
+       WHERE id = $10
        RETURNING *`,
       [
         group_id,
         ledger_name,
+        ledger_type,
         address,
         phone,
         email,

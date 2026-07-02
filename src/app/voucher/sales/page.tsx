@@ -83,14 +83,11 @@ export default function SalesVoucherPage() {
         </h1>
 
         <button
-          onClick={() =>
-            router.push("/vouchers/sales/create")
-          }
-          className="bg-blue-600 text-white px-5 py-2 rounded"
-        >
-          + Create Sales Voucher
-        </button>
-
+  onClick={() => router.push("/voucher/sales/create")}
+  className="bg-blue-600 text-white px-5 py-2 rounded"
+>
+  + Create Sales Voucher
+</button>
       </div>
 
       <input
