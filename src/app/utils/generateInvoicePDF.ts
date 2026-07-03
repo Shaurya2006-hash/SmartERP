@@ -29,75 +29,152 @@ export const generateInvoicePDF = (
 
   const doc = new jsPDF();
 
-  doc.setFontSize(20);
-  doc.text("GST INVOICE", 80, 15);
+  // ===== Title =====
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.text("TAX INVOICE", 105, 15, { align: "center" });
+
+  // ===== Outer Border =====
+
+  doc.rect(10, 20, 190, 260);
+
+  // ===== Company + Invoice Details =====
+
+  doc.rect(10, 20, 110, 40);
+  doc.rect(120, 20, 80, 40);
 
   doc.setFontSize(12);
+  doc.text("Your Company Name", 14, 28);
+  doc.setFontSize(10);
+  doc.text("Company Address", 14, 35);
+  doc.text("GSTIN : XXXXX1234X", 14, 42);
+  doc.text("State : Maharashtra", 14, 49);
 
-  doc.text("Company Name", 14, 30);
-  doc.text("Company Address", 14, 37);
-  doc.text("GSTIN : XXXXX1234X", 14, 44);
+  doc.text(`Invoice No : ${invoice.invoice_no}`, 124, 30);
+  doc.text(`Date : ${invoice.invoice_date}`, 124, 38);
 
-  doc.text(`Invoice No : ${invoice.invoice_no}`, 140, 30);
-  doc.text(`Date : ${invoice.invoice_date}`, 140, 37);
+  // ===== Buyer =====
 
-  doc.text(`Customer : ${invoice.customer_name}`, 14, 60);
-  doc.text(`Address : ${invoice.customer_address}`, 14, 67);
-  doc.text(`GST : ${invoice.customer_gst}`, 14, 74);
+  doc.rect(10, 60, 110, 45);
+  doc.rect(120, 60, 80, 45);
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Buyer (Bill To)", 14, 68);
+
+  doc.setFont("helvetica", "normal");
+  doc.text(invoice.customer_name, 14, 76);
+  doc.text(invoice.customer_address || "-", 14, 84);
+  doc.text(`GSTIN : ${invoice.customer_gst || "-"}`, 14, 92);
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Terms / Delivery", 124, 68);
+
+  doc.setFont("helvetica", "normal");
+  doc.text("-", 124, 76);
+
+  // ===== Items =====
 
   autoTable(doc, {
-    startY: 85,
-    head: [
-      [
-        "Item",
-        "Qty",
-        "Rate",
-        "GST %",
-        "Amount"
-      ]
-    ],
-    body: items.map(item => [
+    startY: 105,
+
+    theme: "grid",
+
+    head: [[
+      "Sl",
+      "Description",
+      "Qty",
+      "Rate",
+      "GST %",
+      "Amount"
+    ]],
+
+    body: items.map((item, index) => [
+
+      index + 1,
+
       item.item_name,
+
       item.quantity,
+
       item.rate,
-      item.gst_percentage,
-      item.amount
-    ])
+
+      item.gst_percentage + "%",
+
+      item.amount,
+
+    ]),
+
+    styles: {
+      fontSize: 10,
+      cellPadding: 3,
+      lineWidth: 0.2,
+      lineColor: [0,0,0]
+    },
+
+    headStyles: {
+      fillColor: [240,240,240],
+      textColor: [0,0,0],
+      fontStyle: "bold"
+    }
+
   });
 
-  const finalY =
-    (doc as any).lastAutoTable.finalY + 10;
+  const finalY = (doc as any).lastAutoTable.finalY + 8;
+
+  // ===== Totals =====
+
+  doc.rect(120, finalY, 80, 42);
+
+  doc.text(`Subtotal : ₹ ${invoice.subtotal}`, 124, finalY + 8);
+
+  doc.text(`CGST : ₹ ${invoice.cgst}`, 124, finalY + 16);
+
+  doc.text(`SGST : ₹ ${invoice.sgst}`, 124, finalY + 24);
+
+  doc.text(`IGST : ₹ ${invoice.igst}`, 124, finalY + 32);
+
+  doc.setFont("helvetica", "bold");
 
   doc.text(
-    `Subtotal : ₹ ${invoice.subtotal}`,
-    140,
-    finalY
+    `Grand Total : ₹ ${invoice.grand_total}`,
+    124,
+    finalY + 40
   );
 
-  doc.text(
-    `CGST : ₹ ${invoice.cgst}`,
-    140,
-    finalY + 8
-  );
+  // ===== Declaration =====
+
+  doc.rect(10, finalY, 110, 42);
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Declaration", 14, finalY + 8);
+
+  doc.setFont("helvetica", "normal");
 
   doc.text(
-    `SGST : ₹ ${invoice.sgst}`,
-    140,
+    "We declare that this invoice shows the",
+    14,
     finalY + 16
   );
 
   doc.text(
-    `IGST : ₹ ${invoice.igst}`,
-    140,
-    finalY + 24
+    "actual price of the goods described.",
+    14,
+    finalY + 22
   );
 
-  doc.setFontSize(14);
+  // ===== Signature =====
 
   doc.text(
-    `Grand Total : ₹ ${invoice.grand_total}`,
-    140,
-    finalY + 36
+    "For Your Company Name",
+    135,
+    finalY + 55
+  );
+
+  doc.text(
+    "Authorised Signatory",
+    138,
+    finalY + 72
   );
 
   doc.save(`${invoice.invoice_no}.pdf`);
