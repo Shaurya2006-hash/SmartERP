@@ -59,6 +59,35 @@ const getCompanies = async (req, res) => {
     });
   }
 };
+
+const getCompanyById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const company = await pool.query(
+      "SELECT * FROM companies WHERE id=$1",
+      [id]
+    );
+
+    if (company.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Company not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      company: company.rows[0],
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const updateCompany = async (req, res) => {
   try {
     const { id } = req.params;
@@ -124,6 +153,7 @@ const deleteCompany = async (req, res) => {
 module.exports = {
   createCompany,
   getCompanies,
+  getCompanyById,
   updateCompany,
   deleteCompany,
 };
