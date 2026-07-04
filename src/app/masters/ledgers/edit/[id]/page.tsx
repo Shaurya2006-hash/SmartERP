@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function EditLedger() {
   const router = useRouter();
   const params = useParams();
@@ -32,7 +32,7 @@ export default function EditLedger() {
       const companyId = localStorage.getItem("companyId");
 
       const response = await fetch(
-        `http://localhost:5000/api/group/all/${companyId}`
+        `${API_BASE_URL}/api/group/all/${companyId}`
       );
 
       const data = await response.json();
@@ -48,7 +48,7 @@ export default function EditLedger() {
   const fetchLedger = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/ledger/${ledgerId}`
+        `${API_BASE_URL}/api/ledger/${ledgerId}`
       );
 
       const data = await response.json();
@@ -81,7 +81,7 @@ export default function EditLedger() {
     try {
 
       const response = await fetch(
-        `http://localhost:5000/api/ledger/update/${ledgerId}`,
+        `${API_BASE_URL}/api/ledger/update/${ledgerId}`,
         {
           method: "PUT",
           headers: {

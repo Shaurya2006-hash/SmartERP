@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function CreateStockGroup() {
 
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function CreateStockGroup() {
       localStorage.getItem("companyId");
 
     const response = await fetch(
-      "http://localhost:5000/api/stock-group/create",
+      `${API_BASE_URL}/api/stock-group/create`,
       {
         method: "POST",
 

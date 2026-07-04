@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function CreateStockItem() {
   const router = useRouter();
 
@@ -27,7 +27,7 @@ export default function CreateStockItem() {
     const companyId = localStorage.getItem("companyId");
 
     const response = await fetch(
-      `http://localhost:5000/api/stock-group/all/${companyId}`
+      `${API_BASE_URL}/api/stock-group/all/${companyId}`
     );
 
     const data = await response.json();
@@ -41,7 +41,7 @@ export default function CreateStockItem() {
     const companyId = localStorage.getItem("companyId");
 
     const response = await fetch(
-      `http://localhost:5000/api/unit/all/${companyId}`
+      `${API_BASE_URL}/api/unit/all/${companyId}`
     );
 
     const data = await response.json();
@@ -55,7 +55,7 @@ export default function CreateStockItem() {
     const companyId = localStorage.getItem("companyId");
 
     const response = await fetch(
-      "http://localhost:5000/api/stock-item/create",
+      `${API_BASE_URL}/api/stock-item/create`,
       {
         method: "POST",
 

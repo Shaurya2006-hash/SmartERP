@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import { API_BASE_URL } from "@/app/config/api";
 interface Ledger {
   id: number;
   ledger_name: string;
@@ -47,7 +47,7 @@ export default function PurchaseVoucher() {
   const loadLedgers = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/ledger/all/${companyId}`
+        `${API_BASE_URL}/api/ledger/all/${companyId}`
       );
 
       const data = await res.json();
@@ -63,7 +63,7 @@ export default function PurchaseVoucher() {
   const loadStockItems = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/stock-item/all/${companyId}`
+        `${API_BASE_URL}/api/stock-item/all/${companyId}`
       );
 
       const data = await res.json();
@@ -167,7 +167,7 @@ export default function PurchaseVoucher() {
       }
 
       const voucherResponse = await fetch(
-        "http://localhost:5000/api/voucher/purchase/create",
+        `${API_BASE_URL}/api/voucher/purchase/create`,
         {
           method: "POST",
           headers: {
@@ -236,7 +236,7 @@ export default function PurchaseVoucher() {
       console.log("Total:", total);
 
       const invoiceResponse = await fetch(
-        "http://localhost:5000/api/invoice/create",
+        `${API_BASE_URL}/api/invoice/create`,
         {
           method: "POST",
           headers: {

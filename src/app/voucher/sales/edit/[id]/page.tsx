@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function EditSalesVoucher() {
   const router = useRouter();
   const params = useParams();
@@ -34,7 +34,7 @@ export default function EditSalesVoucher() {
 
   const loadLedgers = async (company: any) => {
     const response = await fetch(
-      `http://localhost:5000/api/ledger/all/${company}`
+      `${API_BASE_URL}/api/ledger/all/${company}`
     );
     const data = await response.json();
 
@@ -45,7 +45,7 @@ export default function EditSalesVoucher() {
 
   const loadStockItems = async (company: any) => {
     const response = await fetch(
-      `http://localhost:5000/api/stock-item/all/${company}`
+      `${API_BASE_URL}/api/stock-item/all/${company}`
     );
     const data = await response.json();
 
@@ -56,7 +56,7 @@ export default function EditSalesVoucher() {
 
   const loadVoucher = async () => {
     const response = await fetch(
-      `http://localhost:5000/api/voucher/sales/${id}`
+      `${API_BASE_URL}/api/voucher/sales/${id}`
     );
     const data = await response.json();
 
@@ -148,7 +148,7 @@ export default function EditSalesVoucher() {
     };
 
     const response = await fetch(
-      `http://localhost:5000/api/voucher/sales/update/${id}`,
+      `${API_BASE_URL}/api/voucher/sales/update/${id}`,
       {
         method: "PUT",
         headers: {

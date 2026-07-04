@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function LedgerPage() {
   const router = useRouter();
 
@@ -17,7 +17,7 @@ export default function LedgerPage() {
     const companyId = localStorage.getItem("companyId");
 
     const response = await fetch(
-      `http://localhost:5000/api/ledger/all/${companyId}`
+      `${API_BASE_URL}/api/ledger/all/${companyId}`
     );
 
     const data = await response.json();
@@ -31,7 +31,7 @@ export default function LedgerPage() {
     if (!confirm("Delete this ledger?")) return;
 
     await fetch(
-      `http://localhost:5000/api/ledger/delete/${id}`,
+      `${API_BASE_URL}/api/ledger/delete/${id}`,
       {
         method: "DELETE",
       }
@@ -49,7 +49,7 @@ export default function LedgerPage() {
     }
 
     const response = await fetch(
-      `http://localhost:5000/api/ledger/search?name=${value}`
+      `${API_BASE_URL}/api/ledger/search?name=${value}`
     );
 
     const data = await response.json();

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function CreateLedger() {
   const router = useRouter();
 
@@ -29,7 +29,7 @@ export default function CreateLedger() {
       const companyId = localStorage.getItem("companyId");
 
       const response = await fetch(
-        `http://localhost:5000/api/group/all/${companyId}`
+        `${API_BASE_URL}/api/group/all/${companyId}`
       );
 
       const data = await response.json();
@@ -47,7 +47,7 @@ export default function CreateLedger() {
       const companyId = localStorage.getItem("companyId");
 
       const response = await fetch(
-        "http://localhost:5000/api/ledger/create",
+        `${API_BASE_URL}/api/ledger/create`,
         {
           method: "POST",
           headers: {

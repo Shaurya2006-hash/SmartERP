@@ -9,7 +9,7 @@ import {
   useRouter,
   useParams
 } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function EditStockGroup() {
 
   const router = useRouter();
@@ -27,7 +27,7 @@ export default function EditStockGroup() {
   const fetchGroup = async () => {
 
     const response = await fetch(
-      `http://localhost:5000/api/stock-group/${id}`
+      `${API_BASE_URL}/api/stock-group/${id}`
     );
 
     const data = await response.json();
@@ -41,7 +41,7 @@ export default function EditStockGroup() {
   const updateGroup = async () => {
 
     const response = await fetch(
-      `http://localhost:5000/api/stock-group/update/${id}`,
+      `${API_BASE_URL}/api/stock-group/update/${id}`,
       {
         method: "PUT",
 

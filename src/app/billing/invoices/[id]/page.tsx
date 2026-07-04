@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { generateInvoicePDF } from "../../../utils/generateInvoicePDF";
+import { API_BASE_URL } from "@/app/config/api";
 
 interface Invoice {
   id: number;
@@ -29,6 +30,13 @@ interface InvoiceItem {
   amount: number;
 }
 
+interface Company {
+  company_name: string;
+  address: string;
+  gst_number: string;
+  state: string;
+}
+
 export default function ViewInvoice() {
 
   const router = useRouter();
@@ -40,12 +48,14 @@ export default function ViewInvoice() {
 
   const [items, setItems] = useState<InvoiceItem[]>([]);
 
+  const [company, setCompany] = useState<Company | null>(null);
+
   const loadInvoice = async () => {
 
     try {
 
       const response = await fetch(
-        `http://localhost:5000/api/invoice/${id}`
+        `${API_BASE_URL}/api/invoice/${id}`
       );
 
       const data = await response.json();
@@ -66,20 +76,48 @@ export default function ViewInvoice() {
 
   };
 
+  // NOTE: this assumes a GET /api/company/:companyId endpoint returning
+  // { success: true, company: { company_name, company_address,
+  // company_gstin, company_state } }. Check this matches your actual
+  // company controller/route and adjust the URL and field names if not.
+  const loadCompany = async () => {
+
+    const companyId = localStorage.getItem("companyId");
+
+    if (!companyId) return;
+
+    try {
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/company/${companyId}`
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+
+        setCompany(data.company);
+
+      }
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+
+  };
+
   useEffect(() => {
 
     if (id) {
 
       loadInvoice();
+      loadCompany();
 
     }
 
   }, []);
-
-  // Placeholders — wire these up to your actual generator endpoints/logic
-  const downloadPdf = () => {
-    console.log("Download PDF for invoice", id);
-  };
 
   const generateQuotation = () => {
     console.log("Generate Quotation from invoice", id);
@@ -91,6 +129,17 @@ export default function ViewInvoice() {
 
   const generateProforma = () => {
     console.log("Generate Proforma from invoice", id);
+  };
+
+  const handleDownloadPdf = () => {
+
+    if (!invoice || !items.length || !company) {
+      console.log("Invoice, items, or company data not loaded yet.");
+      return;
+    }
+
+    generateInvoicePDF(company, invoice, items);
+
   };
 
   if (!invoice) {
@@ -124,34 +173,14 @@ export default function ViewInvoice() {
               Print
             </button>
 
-           <button
-onClick={() => generateInvoicePDF(invoice, items)}
-className="bg-green-600 text-white px-5 py-2 rounded-lg"
->
-Download PDF
-</button>
-
             <button
-              onClick={generateQuotation}
-              className="bg-indigo-600 text-white px-5 py-2 rounded-lg"
+              onClick={handleDownloadPdf}
+              className="bg-green-600 text-white px-5 py-2 rounded-lg"
             >
-              Generate Quotation
+              Download PDF
             </button>
 
-            <button
-              onClick={generateEstimate}
-              className="bg-teal-600 text-white px-5 py-2 rounded-lg"
-            >
-              Generate Estimate
-            </button>
-
-            <button
-              onClick={generateProforma}
-              className="bg-orange-600 text-white px-5 py-2 rounded-lg"
-            >
-              Generate Proforma
-            </button>
-
+           
             <button
               onClick={() => router.push("/billing/invoices")}
               className="bg-gray-600 text-white px-5 py-2 rounded-lg"

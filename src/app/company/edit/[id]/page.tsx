@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function EditCompanyPage() {
   const router = useRouter();
   const params = useParams();
@@ -22,7 +22,7 @@ export default function EditCompanyPage() {
   const fetchCompany = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/company/${id}`
+        `${API_BASE_URL}/api/company/${id}`
       );
 
       const data = await response.json();
@@ -44,7 +44,7 @@ export default function EditCompanyPage() {
   const handleUpdate = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/company/update/${id}`,
+        `${API_BASE_URL}/api/company/update/${id}`,
         {
           method: "PUT",
           headers: {

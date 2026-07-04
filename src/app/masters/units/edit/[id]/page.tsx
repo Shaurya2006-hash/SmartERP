@@ -9,7 +9,7 @@ import {
 useRouter,
 useParams
 } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function EditUnit(){
 
 const router=useRouter();
@@ -32,7 +32,7 @@ const fetchUnit=async()=>{
 
 const response=await fetch(
 
-`http://localhost:5000/api/unit/${id}`
+`${API_BASE_URL}/api/unit/${id}`
 
 );
 
@@ -52,7 +52,7 @@ const updateUnit=async()=>{
 
 const response=await fetch(
 
-`http://localhost:5000/api/unit/update/${id}`,
+`${API_BASE_URL}/api/unit/update/${id}`,
 
 {
 

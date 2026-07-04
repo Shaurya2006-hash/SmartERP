@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function LoginPage() {
   const router = useRouter();
 
@@ -12,7 +12,7 @@ export default function LoginPage() {
   const handleLogin = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/login",
+        `${API_BASE_URL}/api/auth/login`,
         {
           method: "POST",
           headers: {

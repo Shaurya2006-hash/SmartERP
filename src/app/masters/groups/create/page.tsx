@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function CreateGroup() {
   const router = useRouter();
 
   const [groupName, setGroupName] = useState("");
   const [groupType, setGroupType] = useState("Assets");
   const [description, setDescription] = useState("");
-
+console.log("API URL:", API_BASE_URL);
   const createGroup = async () => {
     try {
       const companyId = localStorage.getItem("companyId");
 
       const response = await fetch(
-        "http://localhost:5000/api/group/create",
+        `${API_BASE_URL}/api/group/create`,
         {
           method: "POST",
           headers: {

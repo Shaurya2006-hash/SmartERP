@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function UnitsPage() {
   const router = useRouter();
 
@@ -17,7 +17,7 @@ export default function UnitsPage() {
     const companyId = localStorage.getItem("companyId");
 
     const response = await fetch(
-      `http://localhost:5000/api/unit/all/${companyId}`
+      `${API_BASE_URL}/api/unit/all/${companyId}`
     );
 
     const data = await response.json();
@@ -31,7 +31,7 @@ export default function UnitsPage() {
     if (!confirm("Delete this Unit?")) return;
 
     await fetch(
-      `http://localhost:5000/api/unit/delete/${id}`,
+      `${API_BASE_URL}/api/unit/delete/${id}`,
       {
         method: "DELETE",
       }
@@ -49,7 +49,7 @@ export default function UnitsPage() {
     }
 
     const response = await fetch(
-      `http://localhost:5000/api/unit/search?name=${value}`
+      `${API_BASE_URL}/api/unit/search?name=${value}`
     );
 
     const data = await response.json();

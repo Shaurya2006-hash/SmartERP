@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function EditGroup() {
   const router = useRouter();
   const params = useParams();
@@ -18,7 +18,7 @@ export default function EditGroup() {
   const fetchGroup = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/group/${params.id}`
+        `${API_BASE_URL}/api/group/${params.id}`
       );
 
       const data = await response.json();
@@ -38,7 +38,7 @@ export default function EditGroup() {
   const updateGroup = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/group/update/${params.id}`,
+        `${API_BASE_URL}/api/group/update/${params.id}`,
         {
           method: "PUT",
           headers: {

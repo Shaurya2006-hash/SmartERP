@@ -1,6 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { API_BASE_URL } from "@/app/config/api";
+
+interface Ledger {
+  id: number;
+  ledger_name: string;
+}
 
 export default function JournalVoucher() {
   const companyId =
@@ -8,61 +14,86 @@ export default function JournalVoucher() {
       ? localStorage.getItem("companyId")
       : "";
 
-  const [voucherNo, setVoucherNo] = useState("");
   const [voucherDate, setVoucherDate] = useState("");
   const [referenceNo, setReferenceNo] = useState("");
   const [narration, setNarration] = useState("");
-  const [debitLedger, setDebitLedger] = useState("");
-  const [creditLedger, setCreditLedger] = useState("");
   const [amount, setAmount] = useState("");
 
-  const saveVoucher = async () => {
-    const response = await fetch(
-      "http://localhost:5000/api/voucher/create",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          company_id: companyId,
-          voucher_no: voucherNo,
-          voucher_type: "Journal",
-          voucher_date: voucherDate,
-          reference_no: referenceNo,
-          narration,
-          total_amount: Number(amount),
+  const [debitLedger, setDebitLedger] = useState<number | "">("");
+  const [creditLedger, setCreditLedger] = useState<number | "">("");
 
-          entries: [
-            {
-              ledger_id: debitLedger,
-              debit: Number(amount),
-              credit: 0,
-            },
-            {
-              ledger_id: creditLedger,
-              debit: 0,
-              credit: Number(amount),
-            },
-          ],
-        }),
+  const [ledgers, setLedgers] = useState<Ledger[]>([]);
+
+  useEffect(() => {
+    loadLedgers();
+  }, []);
+
+  const loadLedgers = async () => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/ledger/all/${companyId}`
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setLedgers(data.ledgers);
       }
-    );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    const data = await response.json();
+  const saveVoucher = async () => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/voucher/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_id: companyId,
+            voucher_type: "Journal",
+            voucher_date: voucherDate,
+            reference_no: referenceNo,
+            narration,
+            total_amount: Number(amount),
 
-    if (data.success) {
-      alert("Journal Voucher Saved Successfully");
+            entries: [
+              {
+                ledger_id: debitLedger,
+                debit: Number(amount),
+                credit: 0,
+              },
+              {
+                ledger_id: creditLedger,
+                debit: 0,
+                credit: Number(amount),
+              },
+            ],
+          }),
+        }
+      );
 
-      setVoucherNo("");
-      setVoucherDate("");
-      setReferenceNo("");
-      setNarration("");
-      setDebitLedger("");
-      setCreditLedger("");
-      setAmount("");
-    } else {
-      alert(data.message);
+      const data = await response.json();
+
+      if (data.success) {
+        alert("Journal Voucher Saved Successfully");
+
+        setVoucherDate("");
+        setReferenceNo("");
+        setNarration("");
+        setAmount("");
+        setDebitLedger("");
+        setCreditLedger("");
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Something went wrong");
     }
   };
 
@@ -76,13 +107,6 @@ export default function JournalVoucher() {
       <div className="bg-white rounded-lg shadow p-6">
 
         <div className="grid grid-cols-2 gap-4">
-
-          <input
-            className="border p-3 rounded"
-            placeholder="Voucher Number"
-            value={voucherNo}
-            onChange={(e) => setVoucherNo(e.target.value)}
-          />
 
           <input
             type="date"
@@ -99,26 +123,60 @@ export default function JournalVoucher() {
           />
 
           <input
+            type="number"
             className="border p-3 rounded"
             placeholder="Amount"
-            type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
 
-          <input
-            className="border p-3 rounded"
-            placeholder="Debit Ledger ID"
-            value={debitLedger}
-            onChange={(e) => setDebitLedger(e.target.value)}
-          />
+          <div></div>
 
-          <input
+          {/* Debit Ledger */}
+
+          <select
             className="border p-3 rounded"
-            placeholder="Credit Ledger ID"
+            value={debitLedger}
+            onChange={(e) =>
+              setDebitLedger(Number(e.target.value))
+            }
+          >
+            <option value="">
+              Select Debit Ledger
+            </option>
+
+            {ledgers.map((ledger) => (
+              <option
+                key={ledger.id}
+                value={ledger.id}
+              >
+                {ledger.ledger_name}
+              </option>
+            ))}
+          </select>
+
+          {/* Credit Ledger */}
+
+          <select
+            className="border p-3 rounded"
             value={creditLedger}
-            onChange={(e) => setCreditLedger(e.target.value)}
-          />
+            onChange={(e) =>
+              setCreditLedger(Number(e.target.value))
+            }
+          >
+            <option value="">
+              Select Credit Ledger
+            </option>
+
+            {ledgers.map((ledger) => (
+              <option
+                key={ledger.id}
+                value={ledger.id}
+              >
+                {ledger.ledger_name}
+              </option>
+            ))}
+          </select>
 
         </div>
 

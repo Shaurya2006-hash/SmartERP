@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 interface Ledger {
   id: number;
   ledger_name: string;
@@ -48,7 +48,7 @@ export default function CreateSalesVoucherPage() {
     const fetchLedgers = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/ledger/all/${companyId}`
+          `${API_BASE_URL}/api/ledger/all/${companyId}`
         );
         const data = await res.json();
         if (data.success) {
@@ -66,7 +66,7 @@ export default function CreateSalesVoucherPage() {
     const fetchStockItems = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/stock-item/all/${companyId}`
+          `${API_BASE_URL}/api/stock-item/all/${companyId}`
         );
         const data = await res.json();
         if (data.success) {
@@ -151,7 +151,7 @@ export default function CreateSalesVoucherPage() {
       }
 
       const voucherResponse = await fetch(
-        "http://localhost:5000/api/voucher/sales/create",
+        `${API_BASE_URL}/api/voucher/sales/create`,
         {
           method: "POST",
           headers: {
@@ -211,7 +211,7 @@ export default function CreateSalesVoucherPage() {
       );
 
       const invoiceResponse = await fetch(
-        "http://localhost:5000/api/invoice/create",
+        `${API_BASE_URL}/api/invoice/create`,
         {
           method: "POST",
           headers: {

@@ -4,37 +4,39 @@ const shortcuts = [
   {
     title: "Global",
     data: [
-      ["F1", "Company Selection"],
-      ["F2", "Financial Year"],
-      ["F3", "Company Info"],
-      ["F4", "Calculator"],
-      ["F5", "Refresh"],
-      ["Esc", "Back"],
-      ["Ctrl+Q", "Logout"],
-      ["Ctrl+H", "Home"],
-      ["Ctrl+K", "Command Search"],
+      ["Ctrl+Alt+C", "Company Selection"],
+      ["Ctrl+Alt+Y", "Financial Year"],
+      ["Ctrl+Alt+I", "Company Information"],
+      ["Ctrl+Alt+X", "Calculator"],
+      ["Ctrl+Alt+R", "Refresh"],
+      ["Alt+←", "Previous Screen"],
+      ["Ctrl+Shift+Q", "Logout"],
+      ["Ctrl+Alt+H", "Home"],
+      ["Ctrl+Alt+K", "Command Search"],
     ],
   },
   {
     title: "Masters",
     data: [
-      ["Alt+L", "Create Ledger"],
-      ["Alt+A", "Alter Ledger"],
+      ["Alt+C", "Create Company"],
       ["Alt+G", "Create Group"],
-      ["Alt+S", "Stock Item"],
+      ["Alt+L", "Create Ledger"],
+      ["Alt+Shift+L", "Edit Ledger"],
+      ["Alt+S", "Create Stock Item"],
       ["Alt+U", "Create Unit"],
+      ["Alt+D", "Create Godown"],
     ],
   },
   {
     title: "Vouchers",
     data: [
-      ["F6", "Receipt"],
-      ["F7", "Journal"],
-      ["F8", "Sales"],
-      ["F9", "Purchase"],
-      ["F10", "Reversing Journal"],
-      ["Alt+F8", "Credit Note"],
-      ["Alt+F9", "Debit Note"],
+      ["Ctrl+Alt+P", "Purchase Voucher"],
+      ["Ctrl+Alt+S", "Sales Voucher"],
+      ["Ctrl+Alt+T", "Receipt Voucher"],
+      ["Ctrl+Alt+J", "Journal Voucher"],
+      ["Ctrl+Alt+V", "Reversing Journal"],
+      ["Ctrl+Alt+N", "Credit Note"],
+      ["Ctrl+Alt+D", "Debit Note"],
     ],
   },
   {
@@ -43,6 +45,8 @@ const shortcuts = [
       ["Ctrl+B", "New Invoice"],
       ["Ctrl+P", "Print Invoice"],
       ["Ctrl+Shift+P", "Download PDF"],
+      ["Ctrl+S", "Save"],
+      ["Ctrl+Shift+X", "Cancel"],
     ],
   },
   {
@@ -52,7 +56,9 @@ const shortcuts = [
       ["Ctrl+Shift+F", "Global Search"],
       ["Enter", "Select"],
       ["Tab", "Next Field"],
-      ["Arrow", "Navigate"],
+      ["Shift+Tab", "Previous Field"],
+      ["Arrow Keys", "Navigation"],
+      ["Esc", "Cancel"],
     ],
   },
 ];
@@ -76,7 +82,7 @@ export default function ShortcutPanel() {
           {section.data.map(([key, value]) => (
 
             <div
-              key={key}
+              key={`${section.title}-${key}-${value}`}
               className="flex justify-between px-4 py-2 hover:bg-gray-800"
             >
 

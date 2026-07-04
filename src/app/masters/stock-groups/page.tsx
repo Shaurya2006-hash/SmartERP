@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function StockGroupsPage() {
   const router = useRouter();
 
@@ -17,7 +17,7 @@ export default function StockGroupsPage() {
     const companyId = localStorage.getItem("companyId");
 
     const response = await fetch(
-      `http://localhost:5000/api/stock-group/all/${companyId}`
+      `${API_BASE_URL}/api/stock-group/all/${companyId}`
     );
 
     const data = await response.json();
@@ -31,7 +31,7 @@ export default function StockGroupsPage() {
     if (!confirm("Delete this Stock Group?")) return;
 
     await fetch(
-      `http://localhost:5000/api/stock-group/delete/${id}`,
+      `${API_BASE_URL}/api/stock-group/delete/${id}`,
       {
         method: "DELETE",
       }
@@ -49,7 +49,7 @@ export default function StockGroupsPage() {
     }
 
     const response = await fetch(
-      `http://localhost:5000/api/stock-group/search?name=${value}`
+      `${API_BASE_URL}/api/stock-group/search?name=${value}`
     );
 
     const data = await response.json();

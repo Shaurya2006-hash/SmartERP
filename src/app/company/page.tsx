@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/app/config/api";
 
 export default function CompanyPage() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function CompanyPage() {
   const fetchCompanies = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/company/all"
+        `${API_BASE_URL}/api/company/all`
       );
 
       const data = await response.json();
@@ -51,7 +52,7 @@ export default function CompanyPage() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/company/delete/${id}`,
+        `${API_BASE_URL}/api/company/delete/${id}`,
         {
           method: "DELETE",
         }

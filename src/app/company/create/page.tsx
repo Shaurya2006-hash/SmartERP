@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/app/config/api";
 
 export default function CreateCompanyPage() {
   const router = useRouter();
@@ -15,8 +16,8 @@ export default function CreateCompanyPage() {
   const handleSubmit = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/company/create",
-        {
+  `${API_BASE_URL}/api/company/create`,
+  {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function GroupsPage() {
   const router = useRouter();
 
@@ -17,7 +17,7 @@ export default function GroupsPage() {
     const companyId = localStorage.getItem("companyId");
 
     const response = await fetch(
-      `http://localhost:5000/api/group/all/${companyId}`
+      `${API_BASE_URL}/api/group/all/${companyId}`
     );
 
     const data = await response.json();
@@ -31,7 +31,7 @@ export default function GroupsPage() {
     if (!confirm("Delete Group?")) return;
 
     await fetch(
-      `http://localhost:5000/api/group/delete/${id}`,
+      `${API_BASE_URL}/api/group/delete/${id}`,
       {
         method: "DELETE",
       }
@@ -49,7 +49,7 @@ export default function GroupsPage() {
     }
 
     const response = await fetch(
-      `http://localhost:5000/api/group/search?name=${value}`
+      `${API_BASE_URL}/api/group/search?name=${value}`
     );
 
     const data = await response.json();

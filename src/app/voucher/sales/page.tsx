@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { API_BASE_URL } from "@/app/config/api";
 export default function SalesVoucherPage() {
 
   const router = useRouter();
@@ -19,7 +19,7 @@ export default function SalesVoucherPage() {
     const companyId = localStorage.getItem("companyId");
 
     const response = await fetch(
-      `http://localhost:5000/api/voucher/sales/all/${companyId}`
+      `${API_BASE_URL}/api/voucher/sales/all/${companyId}`
     );
 
     const data = await response.json();
@@ -35,7 +35,7 @@ export default function SalesVoucherPage() {
     if (!confirm("Delete Sales Voucher?")) return;
 
     await fetch(
-      `http://localhost:5000/api/voucher/sales/delete/${id}`,
+      `${API_BASE_URL}/api/voucher/sales/delete/${id}`,
       {
         method: "DELETE",
       }
@@ -55,7 +55,7 @@ export default function SalesVoucherPage() {
     }
 
     const response = await fetch(
-      `http://localhost:5000/api/voucher/search?type=${value}`
+      `${API_BASE_URL}/api/voucher/search?type=${value}`
     );
 
     const data = await response.json();

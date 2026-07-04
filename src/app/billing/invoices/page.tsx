@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/app/config/api";
 
 interface Invoice {
   id: number;
@@ -26,7 +27,7 @@ export default function InvoicePage() {
   const loadInvoices = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/invoice/all/${companyId}`
+        `${API_BASE_URL}/api/invoice/all/${companyId}`
       );
 
       const data = await response.json();
@@ -52,7 +53,7 @@ export default function InvoicePage() {
     }
 
     const response = await fetch(
-      `http://localhost:5000/api/invoice/search?invoiceNo=${search}`
+      `${API_BASE_URL}/api/invoice/search?invoiceNo=${search}`
     );
 
     const data = await response.json();
@@ -70,7 +71,7 @@ export default function InvoicePage() {
     if (!confirmDelete) return;
 
     await fetch(
-      `http://localhost:5000/api/invoice/delete/${id}`,
+      `${API_BASE_URL}/api/invoice/delete/${id}`,
       {
         method: "DELETE",
       }
