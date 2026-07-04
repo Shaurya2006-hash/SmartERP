@@ -127,28 +127,6 @@ const updateGroup = async (req, res) => {
 };
 
 // Delete Group
-const deleteGroup = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    await pool.query(
-      "DELETE FROM groups WHERE id=$1",
-      [id]
-    );
-
-    res.json({
-      success: true,
-      message: "Group Deleted Successfully",
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
 
 // Search Group
 const searchGroup = async (req, res) => {
@@ -179,6 +157,5 @@ module.exports = {
   getGroups,
   getGroupById,
   updateGroup,
-  deleteGroup,
   searchGroup,
 };

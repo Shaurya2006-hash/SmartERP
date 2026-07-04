@@ -247,38 +247,7 @@ const updateVoucher = async (req, res) => {
   }
 };
 
-// ==========================================
-// Delete Voucher
-// ==========================================
 
-const deleteVoucher = async (req, res) => {
-
-  try {
-
-    const { id } = req.params;
-
-    await pool.query(
-      "DELETE FROM vouchers WHERE id=$1",
-      [id]
-    );
-
-    res.json({
-      success: true,
-      message: "Voucher Deleted Successfully",
-    });
-
-  } catch (error) {
-
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-
-  }
-
-};
 
 // ==========================================
 // Search Voucher
@@ -770,73 +739,6 @@ const updateSalesVoucher = async (req, res) => {
 
 };
 
-// ==========================================
-// Delete Sales Voucher
-// ==========================================
-
-const deleteSalesVoucher = async (req, res) => {
-
-  try {
-
-    const { id } = req.params;
-
-    await pool.query("BEGIN");
-
-    const items = await pool.query(
-      `SELECT *
-       FROM sales_items
-       WHERE voucher_id=$1`,
-      [id]
-    );
-
-    for (const item of items.rows) {
-      await pool.query(
-        `UPDATE stock_items
-         SET quantity = quantity + $1
-         WHERE id=$2`,
-        [item.quantity, item.stock_item_id]
-      );
-    }
-
-    await pool.query(
-      `DELETE FROM sales_items
-       WHERE voucher_id=$1`,
-      [id]
-    );
-
-    await pool.query(
-      `DELETE FROM voucher_entries
-       WHERE voucher_id=$1`,
-      [id]
-    );
-
-    await pool.query(
-      `DELETE FROM vouchers
-       WHERE id=$1`,
-      [id]
-    );
-
-    await pool.query("COMMIT");
-
-    res.json({
-      success: true,
-      message: "Sales Voucher Deleted Successfully",
-    });
-
-  } catch (error) {
-
-    await pool.query("ROLLBACK");
-
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-
-  }
-
-};
 
 module.exports = {
   createVoucher,
@@ -851,8 +753,6 @@ module.exports = {
   updateVoucher,
   updateSalesVoucher,
 
-  deleteVoucher,
-  deleteSalesVoucher,
 
   searchVoucher,
 };

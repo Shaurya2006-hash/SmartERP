@@ -8,7 +8,6 @@ const {
   getStockGroups,
   getStockGroupById,
   updateStockGroup,
-  deleteStockGroup,
   searchStockGroup,
 
 } = require("../controllers/stockGroupController");
@@ -23,6 +22,6 @@ router.get("/:id",getStockGroupById);
 
 router.put("/update/:id",updateStockGroup);
 
-router.delete("/delete/:id",deleteStockGroup);
+
 
 module.exports = router;

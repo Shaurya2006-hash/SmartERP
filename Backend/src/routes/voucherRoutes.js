@@ -13,8 +13,7 @@ const {
   updateVoucher,
   updateSalesVoucher,
 
-  deleteVoucher,
-  deleteSalesVoucher,
+
 
   searchVoucher,
 } = require("../controllers/voucherController");
@@ -34,7 +33,7 @@ router.get("/:id", getVoucherById);
 router.put("/update/:id", updateVoucher);
 
 // Delete Voucher
-router.delete("/delete/:id", deleteVoucher);
+
 router.post("/purchase/create", createPurchaseVoucher);
 router.post("/sales/create", createSalesVoucher);
 router.get(
@@ -50,8 +49,5 @@ router.put(
   "/sales/update/:id",
   updateSalesVoucher
 );
-router.delete(
-  "/sales/delete/:id",
-  deleteSalesVoucher
-);
+
 module.exports = router;

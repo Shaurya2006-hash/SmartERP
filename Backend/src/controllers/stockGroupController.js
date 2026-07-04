@@ -144,35 +144,7 @@ const updateStockGroup = async (req,res)=>{
 
 };
 
-// Delete Stock Group
-const deleteStockGroup = async(req,res)=>{
 
-  try{
-
-    const { id } = req.params;
-
-    await pool.query(
-      "DELETE FROM stock_groups WHERE id=$1",
-      [id]
-    );
-
-    res.json({
-      success:true,
-      message:"Stock Group Deleted Successfully",
-    });
-
-  }catch(error){
-
-    console.error(error);
-
-    res.status(500).json({
-      success:false,
-      message:error.message,
-    });
-
-  }
-
-};
 
 // Search Stock Group
 const searchStockGroup = async(req,res)=>{
@@ -214,6 +186,5 @@ module.exports={
   getStockGroups,
   getStockGroupById,
   updateStockGroup,
-  deleteStockGroup,
   searchStockGroup,
 };

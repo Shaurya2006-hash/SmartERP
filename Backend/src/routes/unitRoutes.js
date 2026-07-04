@@ -7,7 +7,7 @@ const {
   getUnits,
   getUnitById,
   updateUnit,
-  deleteUnit,
+
   searchUnit,
 } = require("../controllers/unitController");
 
@@ -21,6 +21,6 @@ router.get("/:id", getUnitById);
 
 router.put("/update/:id", updateUnit);
 
-router.delete("/delete/:id", deleteUnit);
+
 
 module.exports = router;

@@ -6,7 +6,6 @@ const {
   getGroups,
   getGroupById,
   updateGroup,
-  deleteGroup,
   searchGroup,
 } = require("../controllers/groupController");
 
@@ -18,7 +17,6 @@ router.get("/:id", getGroupById);
 
 router.put("/update/:id", updateGroup);
 
-router.delete("/delete/:id", deleteGroup);
 
 router.get("/search", searchGroup);
 

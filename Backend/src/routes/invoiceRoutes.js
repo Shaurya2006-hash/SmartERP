@@ -6,7 +6,7 @@ createInvoice,
 getAllInvoices,
 getInvoiceById,
 updateInvoice,
-deleteInvoice,
+
 searchInvoice
 }=require("../controllers/invoiceController");
 
@@ -20,6 +20,6 @@ router.get("/:id",getInvoiceById);
 
 router.put("/update/:id",updateInvoice);
 
-router.delete("/delete/:id",deleteInvoice);
+
 
 module.exports=router;

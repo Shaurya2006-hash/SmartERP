@@ -112,29 +112,6 @@ const updateUnit = async (req, res) => {
   }
 };
 
-// Delete Unit
-const deleteUnit = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    await pool.query(
-      "DELETE FROM units WHERE id=$1",
-      [id]
-    );
-
-    res.json({
-      success: true,
-      message: "Unit Deleted Successfully",
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
 
 // Search Unit
 const searchUnit = async (req, res) => {
@@ -167,6 +144,5 @@ module.exports = {
   getUnits,
   getUnitById,
   updateUnit,
-  deleteUnit,
   searchUnit,
 };

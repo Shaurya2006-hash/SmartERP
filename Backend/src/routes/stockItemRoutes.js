@@ -8,7 +8,7 @@ createStockItem,
 getStockItems,
 getStockItemById,
 updateStockItem,
-deleteStockItem,
+
 searchStockItem,
 
 }=require("../controllers/stockItemController");
@@ -23,6 +23,5 @@ router.get("/:id",getStockItemById);
 
 router.put("/update/:id",updateStockItem);
 
-router.delete("/delete/:id",deleteStockItem);
 
 module.exports=router;

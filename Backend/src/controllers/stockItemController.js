@@ -208,35 +208,7 @@ const updateStockItem = async(req,res)=>{
 
 };
 
-// Delete
-const deleteStockItem = async(req,res)=>{
 
-  try{
-
-    const { id } = req.params;
-
-    await pool.query(
-      "DELETE FROM stock_items WHERE id=$1",
-      [id]
-    );
-
-    res.json({
-      success:true,
-      message:"Stock Item Deleted Successfully",
-    });
-
-  }catch(error){
-
-    console.error(error);
-
-    res.status(500).json({
-      success:false,
-      message:error.message,
-    });
-
-  }
-
-};
 
 // Search
 const searchStockItem = async(req,res)=>{
@@ -278,6 +250,5 @@ createStockItem,
 getStockItems,
 getStockItemById,
 updateStockItem,
-deleteStockItem,
 searchStockItem,
 };

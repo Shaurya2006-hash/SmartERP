@@ -130,30 +130,10 @@ const updateCompany = async (req, res) => {
     });
   }
 };
-const deleteCompany = async (req, res) => {
-  try {
-    const { id } = req.params;
 
-    await pool.query(
-      "DELETE FROM companies WHERE id=$1",
-      [id]
-    );
-
-    res.json({
-      success: true,
-      message: "Company Deleted",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
 module.exports = {
   createCompany,
   getCompanies,
   getCompanyById,
   updateCompany,
-  deleteCompany,
 };

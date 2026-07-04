@@ -594,82 +594,6 @@ message:error.message
 };
 
 // Delete Invoice
-const deleteInvoice=async(req,res)=>{
-
-try{
-
-const{id}=req.params;
-
-const invoiceRow=await pool.query(
-"SELECT document_type FROM invoices WHERE id=$1",
-[id]
-);
-
-const documentType=invoiceRow.rows[0]?.document_type;
-const isTaxableDoc=
-documentType==="GST Invoice"||documentType==="Purchase Invoice";
-
-const items=await pool.query(
-"SELECT * FROM invoice_items WHERE invoice_id=$1",
-[id]
-);
-
-if(isTaxableDoc){
-
-for(const item of items.rows){
-
-const revert=
-documentType==="Purchase Invoice" ? -item.quantity : item.quantity;
-
-await pool.query(
-"UPDATE stock_items SET quantity=quantity+$1 WHERE id=$2",
-[
-revert,
-item.stock_item_id
-]
-);
-
-}
-
-}
-
-await pool.query(
-"DELETE FROM inventory_transactions WHERE invoice_id=$1",
-[id]
-);
-
-await pool.query(
-"DELETE FROM gst_records WHERE invoice_id=$1",
-[id]
-);
-
-await pool.query(
-"DELETE FROM invoice_items WHERE invoice_id=$1",
-[id]
-);
-
-await pool.query(
-"DELETE FROM invoices WHERE id=$1",
-[id]
-);
-
-res.json({
-success:true,
-message:"Deleted Successfully"
-});
-
-}catch(error){
-
-console.error(error);
-
-res.status(500).json({
-success:false,
-message:error.message
-});
-
-}
-
-};
 
 // Search Invoice
 const searchInvoice=async(req,res)=>{
@@ -711,6 +635,5 @@ createInvoice,
 getAllInvoices,
 getInvoiceById,
 updateInvoice,
-deleteInvoice,
 searchInvoice
 };
