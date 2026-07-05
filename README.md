@@ -1,546 +1,436 @@
-📄 SmartERP – Business Management System
-Project Overview
-
-SmartERP is a web-based Enterprise Resource Planning (ERP) application developed to simplify accounting and inventory management for small and medium-sized businesses.
-
-The platform enables business owners to manage companies, ledger groups, ledgers, inventory, vouchers, and business transactions from a centralized dashboard.
-
-The system replaces manual bookkeeping and spreadsheet-based accounting with a secure digital solution that improves efficiency, accuracy, and business decision-making.
-
-Introduction
-
-Many small businesses still rely on paper registers and spreadsheets to maintain accounting records.
-
-Traditional workflows involve:
-
-Manual bookkeeping
-Paper vouchers
-Excel sheets
-Manual inventory tracking
-Separate files for different departments
-
-These methods lead to:
-
-Human errors
-Duplicate data
-Inventory mismatches
-Time-consuming accounting
-Poor financial reporting
-
-SmartERP provides a centralized web-based ERP solution that digitizes accounting and inventory operations while allowing users to manage their business securely.
-
-Industry Value
-
-SmartERP can be implemented across multiple industries.
-
-Retail Stores
-Inventory management
-Sales tracking
-Customer management
-Wholesale Businesses
-Supplier management
-Purchase tracking
-Stock monitoring
-Manufacturing
-Raw material management
-Product inventory
-Purchase and sales accounting
-Accounting Firms
-Multiple company bookkeeping
-Financial records
-Ledger management
-Small & Medium Enterprises
-Business accounting
-Inventory tracking
-Voucher management
-Benefits
-Centralized accounting
-Faster bookkeeping
-Reduced paperwork
-Better inventory control
-Secure business data
-Improved financial reporting
-Business scalability
-Use Cases
-Use Case 1: Company Management
+# 🚀 SmartERP - Business Management System
 
-Business owners create and manage their companies.
+A full-stack ERP (Enterprise Resource Planning) system developed using **Next.js**, **Node.js**, **Express.js**, and **PostgreSQL** to simplify accounting, inventory management, and voucher management for small and medium-sized businesses.
 
-Use Case 2: Ledger Management
+---
 
-Create and maintain:
+# 📖 Table of Contents
 
-Customer Ledgers
-Supplier Ledgers
-Expense Ledgers
-Bank Ledgers
-Use Case 3: Inventory Management
+- Project Overview
+- Features
+- Technology Stack
+- Folder Structure
+- Installation
+- Environment Variables
+- Running the Project
+- Screenshots
+- API Endpoints
+- Future Scope
+- Author
 
-Manage
+---
 
-Stock Groups
-Units
-Stock Items
-Use Case 4: Voucher Management
+# 📌 Project Overview
 
-Create accounting vouchers including
+SmartERP is a web-based Enterprise Resource Planning (ERP) application that helps businesses manage:
 
-Payment Voucher
-Receipt Voucher
-Journal Voucher
-Purchase Voucher
-Sales Voucher
-Use Case 5: Dashboard Monitoring
+- User Authentication
+- Company Management
+- Ledger Groups
+- Ledgers
+- Stock Groups
+- Units
+- Stock Items
+- Payment Voucher
+- Receipt Voucher
+- Journal Voucher
+- Purchase Voucher
+- Sales Voucher
+- Dashboard Analytics
 
-View business summary including
+The application digitizes accounting processes and inventory management while providing a clean and responsive interface.
 
-Total Ledgers
-Stock Items
-Groups
-Units
-Stock Groups
-User Roles
-Business Owner
+---
 
-The business owner can
+# ✨ Features
 
-Register
-Login
-Create Company
-Manage Ledger Groups
-Manage Ledgers
-Manage Inventory
-Create Vouchers
-View Dashboard
-Logout
-Future Roles
+## 🔐 User Authentication
 
-The system can be extended with
+- User Registration
+- Secure Login
+- JWT Authentication
+- Password Encryption
+- Protected Routes
 
-Administrator
-Accountant
-Sales Executive
-Inventory Manager
-System Architecture
+### Screenshot
 
-Frontend (Next.js + React)
+![Login](screenshots/login.png)
 
-↓
+![Register](screenshots/register.png)
 
-Backend APIs (Node.js + Express)
+---
 
-↓
+## 📊 Dashboard
 
-PostgreSQL Database
-
-Technology Stack
-Frontend
-Next.js
-
-Purpose
-
-Develop modern web applications with routing and optimized rendering.
-
-Reason for Selection
-
-Fast rendering
-Built-in routing
-SEO support
-High performance
-React.js
-
-Purpose
-
-Develop reusable user interface components.
-
-Reason for Selection
-
-Component-based architecture
-Fast rendering
-Better maintainability
-TypeScript
-
-Purpose
-
-Provide static typing and improve code quality.
-
-Reason for Selection
-
-Type safety
-Better IntelliSense
-Easier debugging
-Tailwind CSS
-
-Purpose
-
-Responsive user interface design.
-
-Reason for Selection
-
-Utility-first framework
-Faster UI development
-Mobile responsive layouts
-Backend
-Node.js
-
-Purpose
-
-Server-side JavaScript runtime.
-
-Reason for Selection
-
-High performance
-Non-blocking architecture
-Scalable APIs
-Express.js
-
-Purpose
-
-Develop backend REST APIs.
-
-Responsibilities
-
-Authentication APIs
-Company APIs
-Inventory APIs
-Voucher APIs
-Dashboard APIs
-
-Reason for Selection
-
-Lightweight
-Easy routing
-Middleware support
-Database
-PostgreSQL
-
-Purpose
-
-Stores application data.
-
-Tables include
-
-Users
-Companies
-Ledger Groups
-Ledgers
-Stock Groups
-Units
-Stock Items
-Vouchers
-Voucher Entries
-
-Reason for Selection
-
-Relational database
-ACID compliance
-High reliability
-Complex SQL queries
-Authentication
-JWT (JSON Web Token)
-
-Purpose
-
-Secure user authentication.
-
-Reason for Selection
-
-Stateless authentication
-Secure API communication
-Protected routes
-bcrypt.js
-
-Purpose
-
-Encrypt user passwords.
-
-Reason for Selection
-
-Strong password hashing
-Improved security
 Features
-User Registration
 
-Users can
+- Company Overview
+- Ledger Count
+- Stock Group Count
+- Unit Count
+- Stock Item Count
+- Quick Navigation
+- Keyboard Shortcuts
 
-Create account
-Store encrypted password
-Secure authentication
-Screenshot
+### Screenshot
 
-Insert Registration Page Screenshot
+![Dashboard](screenshots/dashboard.png)
 
-User Login
+---
 
-Users login using
+## 🏢 Company Management
 
-Email
-Password
+Features
 
-JWT token is generated after successful login.
+- Create Company
+- Edit Company
+- Company Details
+- GST Number
+- Financial Year
+- State
 
-Screenshot
+### Screenshot
 
-Insert Login Page Screenshot
+![Company](screenshots/company.png)
 
-Dashboard
+---
 
-Dashboard displays
+## 📂 Ledger Groups
 
-Total Ledgers
-Groups
-Stock Groups
-Units
-Stock Items
-Screenshot
+Features
 
-Insert Dashboard Screenshot
+- Create Group
+- Edit Group
+- Delete Group
+- Parent Group Support
 
-Company Management
+### Screenshot
 
-Users can
+![Ledger Groups](screenshots/ledger-groups.png)
 
-Create Company
-Edit Company
-View Company Information
-Screenshot
+---
 
-Insert Company Screen Screenshot
+## 📒 Ledgers
 
-Ledger Groups
+Features
 
-Users create accounting groups.
+- Create Ledger
+- Update Ledger
+- Delete Ledger
+- Assign Ledger Group
+- Search Ledger
 
-Examples
+### Screenshot
 
-Assets
-Liabilities
-Expenses
-Income
-Screenshot
+![Ledgers](screenshots/ledgers.png)
 
-Insert Ledger Group Screenshot
+---
 
-Ledgers
+## 📁 Stock Groups
 
-Users manage
+Features
 
-Customer Ledgers
-Supplier Ledgers
-Cash Ledger
-Bank Ledger
-Screenshot
+- Create Stock Group
+- Edit Stock Group
+- Delete Stock Group
 
-Insert Ledger Screenshot
+### Screenshot
 
-Stock Groups
+![Stock Groups](screenshots/stock-groups.png)
 
-Create inventory categories.
+---
 
-Example
+## 📏 Units
 
-Electronics
+Features
 
-↓
+- Create Unit
+- Edit Unit
+- Delete Unit
 
-Laptops
+### Screenshot
 
-↓
+![Units](screenshots/units.png)
 
-Gaming Laptops
+---
 
-Screenshot
+## 📦 Stock Items
 
-Insert Stock Group Screenshot
+Features
 
-Units
+- Product Name
+- SKU
+- Purchase Price
+- Selling Price
+- GST
+- Quantity
+- Stock Group
+- Unit
 
-Manage inventory units.
+### Screenshot
 
-Examples
+![Stock Items](screenshots/stock-items.png)
 
-Piece
-Kg
-Litre
-Box
-Screenshot
+---
 
-Insert Units Screenshot
+## 💳 Payment Voucher
 
-Stock Items
+Features
 
-Users can create products by entering
+- Voucher Number
+- Date
+- From Ledger
+- To Ledger
+- Amount
+- Narration
 
-Product Name
-SKU
-Purchase Price
-Selling Price
-GST
-Quantity
-Screenshot
+### Screenshot
 
-Insert Stock Item Screenshot
+![Payment Voucher](screenshots/payment-voucher.png)
 
-Payment Voucher
+---
 
-Records outgoing payments.
+## 💰 Receipt Voucher
 
-Screenshot
+Features
 
-Insert Payment Voucher Screenshot
+- Receipt Number
+- Date
+- Customer Ledger
+- Cash Ledger
+- Amount
+- Narration
 
-Receipt Voucher
+### Screenshot
 
-Records incoming payments.
+![Receipt Voucher](screenshots/receipt-voucher.png)
 
-Screenshot
+---
 
-Insert Receipt Voucher Screenshot
+## 📘 Journal Voucher
 
-Journal Voucher
+Features
 
-Creates accounting adjustment entries.
+- Debit Ledger
+- Credit Ledger
+- Amount
+- Narration
 
-Screenshot
+### Screenshot
 
-Insert Journal Voucher Screenshot
+![Journal Voucher](screenshots/journal-voucher.png)
 
-Purchase Voucher
+---
 
-Records purchases.
+## 🛒 Purchase Voucher
 
-Screenshot
+Features
 
-Insert Purchase Voucher Screenshot
+- Supplier
+- Purchase Date
+- Stock Items
+- GST
+- Quantity
+- Total Amount
 
-Sales Voucher
+### Screenshot
 
-Records customer sales.
+![Purchase Voucher](screenshots/purchase-voucher.png)
 
-Screenshot
+---
 
-Insert Sales Voucher Screenshot
+## 🧾 Sales Voucher
 
-Frontend Folder Structure
-smart-erp/
+Features
+
+- Customer
+- Products
+- Quantity
+- GST
+- Total Amount
+
+### Screenshot
+
+![Sales Voucher](screenshots/sales-voucher.png)
+
+---
+
+## ⌨ Keyboard Shortcut Panel
+
+Features
+
+- Company Selection
+- Financial Year
+- Calculator
+- Voucher Navigation
+- Home
+- Command Search
+
+### Screenshot
+
+![Keyboard Shortcuts](screenshots/keyboard-shortcuts.png)
+
+---
+
+# 🛠 Technology Stack
+
+## Frontend
+
+- Next.js
+- React.js
+- TypeScript
+- Tailwind CSS
+
+## Backend
+
+- Node.js
+- Express.js
+
+## Database
+
+- PostgreSQL
+
+## Authentication
+
+- JWT
+- bcrypt.js
+
+---
+
+# 📂 Folder Structure
+
+```
+SmartERP/
 │
-├── app/
-│   ├── dashboard/
-│   ├── billing/
-│   ├── company/
-│   ├── login/
-│   ├── register/
-│   ├── masters/
-│   ├── voucher/
+├── frontend/
+│   ├── app/
+│   ├── public/
 │   ├── components/
 │   ├── hooks/
 │   ├── config/
-│   └── globals.css
+│   └── package.json
 │
-├── public/
-├── package.json
-└── next.config.ts
-
-Frontend Responsibilities
-
-Authentication
-Dashboard
-Company Management
-Inventory UI
-Voucher Forms
-API Communication
-Keyboard Shortcuts
-Backend Folder Structure
-backend/
+├── backend/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── routes/
+│   ├── server.js
+│   └── package.json
 │
-├── config/
-├── controllers/
-├── middleware/
-├── routes/
-├── models/
-├── database/
-├── server.js
-└── package.json
+├── screenshots/
+│
+├── README.md
+│
+└── LICENSE
+```
 
-Backend Responsibilities
+---
 
-User Authentication
-Company Management
-Ledger Management
-Inventory APIs
-Voucher APIs
-Dashboard APIs
-Database Operations
-Challenges Faced
-User Authentication
-Challenge
+# ⚙ Installation
 
-Initially, when a new user logged in, previously created company records were visible because companies were not associated with specific users.
+Clone the repository
 
-Solution
+```bash
+git clone https://github.com/yourusername/SmartERP.git
+```
 
-Introduced user_id mapping for companies and ensured that each authenticated user accesses only their own company and related business data.
+Go inside the project
 
-Dashboard Security
-Challenge
+```bash
+cd SmartERP
+```
 
-Users could attempt to access protected pages directly using URLs.
+Install frontend dependencies
 
-Solution
+```bash
+cd frontend
+npm install
+```
 
-Implemented JWT-based authentication and protected routes to restrict unauthorized access.
+Install backend dependencies
 
-Data Isolation
-Challenge
+```bash
+cd ../backend
+npm install
+```
 
-Different users' business data could overlap if records were not filtered properly.
+---
 
-Solution
+# 🔑 Environment Variables
 
-Designed APIs to filter records based on the authenticated user's company, ensuring complete data isolation.
+Backend
 
-Responsive Layout
-Challenge
+```
+PORT=5000
 
-Maintaining a consistent layout with a fixed keyboard shortcuts panel across different screen sizes.
+DATABASE_URL=your_postgresql_database
 
-Solution
+JWT_SECRET=your_secret_key
+```
 
-Implemented responsive layouts using Tailwind CSS with fixed and flexible containers.
+Frontend
 
-Deployment
-Challenge
+```
+NEXT_PUBLIC_API_URL=https://your-backend-url
+```
 
-Deploying frontend and backend separately while maintaining API communication.
+---
 
-Solution
-Backend deployed independently
-Frontend deployed on Vercel
-Environment variables configured for API URLs
-Future Enhancements
-GST Invoice Generation
-Financial Reports
-Profit & Loss Statement
-Balance Sheet
-Barcode Scanner
-Multi-user Roles
-Role-based Permissions
-Email Notifications
-Cloud Backup
-Mobile Application
-AI-powered Business Insights
-Conclusion
+# ▶ Running the Project
 
-SmartERP is a comprehensive ERP solution designed to simplify business operations through digital accounting and inventory management.
+Backend
 
-The platform successfully implements
+```bash
+npm run dev
+```
 
-Secure User Authentication
-Company Management
-Ledger Management
-Inventory Management
-Voucher Management
-Dashboard Analytics
-User-specific Business Data
+Frontend
 
-The system improves business efficiency, reduces manual work, minimizes accounting errors, and provides a scalable foundation for future ERP enhancements.
+```bash
+npm run dev
+```
+
+---
+
+# 📸 Screenshots
+
+| Module | Screenshot |
+|----------|------------|
+| Login | login.png |
+| Dashboard | dashboard.png |
+| Company | company.png |
+| Ledgers | ledgers.png |
+| Stock Items | stock-items.png |
+| Payment Voucher | payment-voucher.png |
+| Receipt Voucher | receipt-voucher.png |
+| Journal Voucher | journal-voucher.png |
+
+---
+
+# 🚀 Future Scope
+
+- GST Invoice Generation
+- Profit & Loss Report
+- Balance Sheet
+- Barcode Scanner
+- Role Based Authentication
+- Cloud Backup
+- Mobile Application
+- AI Business Analytics
+
+---
+
+# 👨‍💻 Author
+
+**Shaurya Aggarwal**
+
+GitHub: https://github.com/yourusername
+
+LinkedIn: https://linkedin.com/in/yourprofile
+
+Email: your@email.com
+
+---
+
+⭐ If you like this project, don't forget to star this repository.
