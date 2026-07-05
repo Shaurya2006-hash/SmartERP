@@ -3,6 +3,7 @@
 A full-stack ERP (Enterprise Resource Planning) system developed using **Next.js**, **Node.js**, **Express.js**, and **PostgreSQL** to simplify accounting, inventory management, and voucher management for small and medium-sized businesses.
 
 Frontend Link: https://smart-erp-beige.vercel.app/
+---
 Backend Link:https://smarterp-81tq.onrender.com/
 ---
 
