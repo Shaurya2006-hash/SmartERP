@@ -2,6 +2,8 @@
 
 A full-stack ERP (Enterprise Resource Planning) system developed using **Next.js**, **Node.js**, **Express.js**, and **PostgreSQL** to simplify accounting, inventory management, and voucher management for small and medium-sized businesses.
 
+Frontend Link: https://smart-erp-beige.vercel.app/
+Backend Link:https://smarterp-81tq.onrender.com/
 ---
 
 # 📖 Table of Contents
@@ -53,12 +55,9 @@ The application digitizes accounting processes and inventory management while pr
 - Protected Routes
 
 ### Screenshot
+<img width="1887" height="922" alt="image" src="https://github.com/user-attachments/assets/a76d9460-a90c-4c7c-a233-48d99a032922" />
+<img width="1497" height="822" alt="image" src="https://github.com/user-attachments/assets/0225622e-cfee-4567-bc70-3959d3f11fe5" />
 
-![Login](screenshots/login.png)
-
-![Register](screenshots/register.png)
-
----
 
 ## 📊 Dashboard
 
@@ -73,10 +72,8 @@ Features
 - Keyboard Shortcuts
 
 ### Screenshot
+<img width="1877" height="917" alt="image" src="https://github.com/user-attachments/assets/dc773c24-ab12-40fb-b158-fafe7f605966" />
 
-![Dashboard](screenshots/dashboard.png)
-
----
 
 ## 🏢 Company Management
 
@@ -90,11 +87,7 @@ Features
 - State
 
 ### Screenshot
-
-![Company](screenshots/company.png)
-
----
-
+<img width="1571" height="898" alt="image" src="https://github.com/user-attachments/assets/e2be4621-45be-42cf-95c2-5dcac58cd9a5" />
 ## 📂 Ledger Groups
 
 Features
@@ -105,10 +98,8 @@ Features
 - Parent Group Support
 
 ### Screenshot
+<img width="1476" height="908" alt="image" src="https://github.com/user-attachments/assets/1f4135d1-ac7d-46ce-96d5-65228add9ae5" />
 
-![Ledger Groups](screenshots/ledger-groups.png)
-
----
 
 ## 📒 Ledgers
 
@@ -122,9 +113,7 @@ Features
 
 ### Screenshot
 
-![Ledgers](screenshots/ledgers.png)
-
----
+<img width="1505" height="831" alt="image" src="https://github.com/user-attachments/assets/50e7aa4e-9271-491e-848b-241edbcdef15" />
 
 ## 📁 Stock Groups
 
@@ -135,10 +124,7 @@ Features
 - Delete Stock Group
 
 ### Screenshot
-
-![Stock Groups](screenshots/stock-groups.png)
-
----
+<img width="1508" height="632" alt="image" src="https://github.com/user-attachments/assets/d6479e04-36c5-41d5-a472-158e0c37071c" />
 
 ## 📏 Units
 
@@ -150,9 +136,8 @@ Features
 
 ### Screenshot
 
-![Units](screenshots/units.png)
+<img width="1497" height="846" alt="image" src="https://github.com/user-attachments/assets/8e487564-1ea6-436a-91fd-867e1e55bace" />
 
----
 
 ## 📦 Stock Items
 
@@ -169,10 +154,7 @@ Features
 
 ### Screenshot
 
-![Stock Items](screenshots/stock-items.png)
-
----
-
+<img width="1487" height="768" alt="image" src="https://github.com/user-attachments/assets/9d4a0c1f-352b-42ac-8ca8-3fc23245704e" />
 ## 💳 Payment Voucher
 
 Features
@@ -186,9 +168,7 @@ Features
 
 ### Screenshot
 
-![Payment Voucher](screenshots/payment-voucher.png)
-
----
+<img width="1517" height="897" alt="image" src="https://github.com/user-attachments/assets/bbecd5cb-dd38-45dc-910d-98797bb1a93f" />
 
 ## 💰 Receipt Voucher
 
@@ -203,9 +183,8 @@ Features
 
 ### Screenshot
 
-![Receipt Voucher](screenshots/receipt-voucher.png)
+<img width="1507" height="827" alt="image" src="https://github.com/user-attachments/assets/ca1d0e7c-5f67-43d3-b3a1-d891a591962e" />
 
----
 
 ## 📘 Journal Voucher
 
@@ -218,9 +197,7 @@ Features
 
 ### Screenshot
 
-![Journal Voucher](screenshots/journal-voucher.png)
-
----
+<img width="1918" height="907" alt="image" src="https://github.com/user-attachments/assets/3e992545-756c-4e6d-a5f3-0778cbda7ef8" />
 
 ## 🛒 Purchase Voucher
 
@@ -234,10 +211,7 @@ Features
 - Total Amount
 
 ### Screenshot
-
-![Purchase Voucher](screenshots/purchase-voucher.png)
-
----
+<img width="1545" height="897" alt="image" src="https://github.com/user-attachments/assets/aeb3815d-a29e-44b8-b1fe-4af3e7d2e334" />
 
 ## 🧾 Sales Voucher
 
@@ -251,9 +225,7 @@ Features
 
 ### Screenshot
 
-![Sales Voucher](screenshots/sales-voucher.png)
-
----
+<img width="1530" height="636" alt="image" src="https://github.com/user-attachments/assets/452442f3-688c-4487-b758-07341d9fb0fa" />
 
 ## ⌨ Keyboard Shortcut Panel
 
@@ -268,9 +240,8 @@ Features
 
 ### Screenshot
 
-![Keyboard Shortcuts](screenshots/keyboard-shortcuts.png)
+<img width="396" height="920" alt="image" src="https://github.com/user-attachments/assets/1cb842fb-c6c9-4ac1-af63-c88aab07d378" />
 
----
 
 # 🛠 Technology Stack
 
@@ -302,7 +273,6 @@ Features
 ```
 SmartERP/
 │
-├── frontend/
 │   ├── app/
 │   ├── public/
 │   ├── components/
@@ -318,11 +288,10 @@ SmartERP/
 │   ├── server.js
 │   └── package.json
 │
-├── screenshots/
 │
 ├── README.md
 │
-└── LICENSE
+
 ```
 
 ---
@@ -391,23 +360,6 @@ Frontend
 npm run dev
 ```
 
----
-
-# 📸 Screenshots
-
-| Module | Screenshot |
-|----------|------------|
-| Login | login.png |
-| Dashboard | dashboard.png |
-| Company | company.png |
-| Ledgers | ledgers.png |
-| Stock Items | stock-items.png |
-| Payment Voucher | payment-voucher.png |
-| Receipt Voucher | receipt-voucher.png |
-| Journal Voucher | journal-voucher.png |
-
----
-
 # 🚀 Future Scope
 
 - GST Invoice Generation
@@ -425,11 +377,7 @@ npm run dev
 
 **Shaurya Aggarwal**
 
-GitHub: https://github.com/yourusername
-
-LinkedIn: https://linkedin.com/in/yourprofile
-
-Email: your@email.com
+GitHub: https://github.com/Shaurya2006-hash/SmartERP
 
 ---
 
