@@ -1,7 +1,15 @@
+const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
 
 const createCompany = async (req, res) => {
   try {
+
+    const token = req.headers.authorization?.split(" ")[1];
+
+    const decoded = jwt.verify(token, "smarterp_secret");
+
+    const userId = decoded.id;
+
     const {
       company_name,
       address,
@@ -13,15 +21,17 @@ const createCompany = async (req, res) => {
     const company = await pool.query(
       `INSERT INTO companies
       (
+        user_id,
         company_name,
         address,
         gst_number,
         financial_year,
         state
       )
-      VALUES($1,$2,$3,$4,$5)
+      VALUES($1,$2,$3,$4,$5,$6)
       RETURNING *`,
       [
+        userId,
         company_name,
         address,
         gst_number,
@@ -34,18 +44,26 @@ const createCompany = async (req, res) => {
       success: true,
       company: company.rows[0],
     });
+
   } catch (error) {
+
     res.status(500).json({
-      success: false,
-      message: error.message,
+      success:false,
+      message:error.message
     });
+
   }
 };
 
 const getCompanies = async (req, res) => {
   try {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    const decoded = jwt.verify(token, "smarterp_secret");
+
     const companies = await pool.query(
-      "SELECT * FROM companies ORDER BY id DESC"
+      "SELECT * FROM companies WHERE user_id=$1 ORDER BY id DESC",
+      [decoded.id]
     );
 
     res.json({
@@ -62,11 +80,15 @@ const getCompanies = async (req, res) => {
 
 const getCompanyById = async (req, res) => {
   try {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    const decoded = jwt.verify(token, "smarterp_secret");
+
     const { id } = req.params;
 
     const company = await pool.query(
-      "SELECT * FROM companies WHERE id=$1",
-      [id]
+      "SELECT * FROM companies WHERE id=$1 AND user_id=$2",
+      [id, decoded.id]
     );
 
     if (company.rows.length === 0) {
@@ -90,6 +112,10 @@ const getCompanyById = async (req, res) => {
 
 const updateCompany = async (req, res) => {
   try {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    const decoded = jwt.verify(token, "smarterp_secret");
+
     const { id } = req.params;
 
     const {
@@ -107,7 +133,7 @@ const updateCompany = async (req, res) => {
            gst_number=$3,
            financial_year=$4,
            state=$5
-       WHERE id=$6
+       WHERE id=$6 AND user_id=$7
        RETURNING *`,
       [
         company_name,
@@ -116,8 +142,16 @@ const updateCompany = async (req, res) => {
         financial_year,
         state,
         id,
+        decoded.id,
       ]
     );
+
+    if (company.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Company not found or not yours",
+      });
+    }
 
     res.json({
       success: true,
